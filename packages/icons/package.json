@@ -1,0 +1,11 @@
+{
+  "name": "@objectlens/icons",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Shared SVG icon set. Views and the app shell draw from one source so a chevron means the same thing everywhere.",
+  "license": "MIT",
+  "exports": { ".": { "types": "./src/index.tsx", "default": "./src/index.tsx" } },
+  "files": ["src", "dist"],
+  "scripts": { "typecheck": "tsc --build" },
+  "peerDependencies": { "react": ">=18" }
+}

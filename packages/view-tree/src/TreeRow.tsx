@@ -3,9 +3,13 @@
  *
  * Deliberately dumb: it renders what it is given and reports clicks upward. All state — selection,
  * expansion — lives in the app store, which is what keeps the tree and the graph in sync.
+ *
+ * Colours come from the shared node-kind tokens rather than literal Tailwind classes, so the
+ * graph view will render a scalar the same green without duplicating the mapping.
  */
 
-import { isAddressable, type ChildRelation } from '@objectlens/core';
+import { isAddressable, type ChildRelation, type Node } from '@objectlens/core';
+import { Bullet, ChevronDown, ChevronRight, Cycle, Dot, NoPath, SharedRef } from '@objectlens/icons';
 import type { TreeRow as Row } from './rows.js';
 import { elide, preview, typeLabel } from './preview.js';
 
@@ -20,6 +24,7 @@ export interface TreeRowProps {
 
 export function TreeRowView({ row, isSelected, onSelect, onToggle }: TreeRowProps) {
   const { node, label, relation, depth, hasChildren, isExpanded, isMatch } = row;
+  const addressable = isAddressable(node.id);
 
   return (
     <div
@@ -36,7 +41,13 @@ export function TreeRowView({ row, isSelected, onSelect, onToggle }: TreeRowProp
         type="button"
         aria-label={isExpanded ? `Collapse ${label}` : `Expand ${label}`}
         tabIndex={-1}
-        className={`w-4 shrink-0 text-slate-400 ${hasChildren ? 'hover:text-slate-100' : 'invisible'}`}
+        // A 16px glyph is a poor target, so the button carries padding and a negative margin:
+        // the hit area grows without the row getting taller.
+        className={`-my-1 shrink-0 rounded p-1 transition-colors duration-150 ${
+          hasChildren
+            ? 'cursor-pointer text-slate-400 hover:bg-slate-700/60 hover:text-slate-100'
+            : 'pointer-events-none text-[color:var(--color-ink-faint)]'
+        }`}
         onClick={(event) => {
           // Without this the row's own onSelect would fire too, so expanding would also move
           // the selection — and with it the graph view's focus.
@@ -44,62 +55,96 @@ export function TreeRowView({ row, isSelected, onSelect, onToggle }: TreeRowProp
           onToggle(node.id);
         }}
       >
-        {hasChildren ? (isExpanded ? '▾' : '▸') : '·'}
+        {hasChildren ? (
+          isExpanded ? (
+            <ChevronDown className="text-[10px]" />
+          ) : (
+            <ChevronRight className="text-[10px]" />
+          )
+        ) : (
+          <Dot className="text-[10px]" />
+        )}
       </button>
 
-      {label !== '' && <span className={labelClass(relation)}>{label}</span>}
-      {label !== '' && <span className="text-slate-600">:</span>}
+      {label !== '' &&
+        (relation === 'item' && label === '•' ? (
+          <Bullet className="shrink-0 text-[8px] text-[color:var(--color-label-index)]" />
+        ) : (
+          <>
+            <span className={labelClass(relation)}>{label}</span>
+            {/*
+              A colon is punctuation, but it is still text content, so it has to clear 4.5:1 —
+              `--color-ink-faint` measured 2.35:1 against the row. Kept at the subtle tier rather
+              than dropped, because it is what separates a key from a value at a glance.
+            */}
+            <span className="text-[color:var(--color-ink-subtle)]">:</span>
+          </>
+        ))}
 
-      <span className={valueClass(node.kind)}>{elide(preview(node))}</span>
+      <span className={`flex min-w-0 items-center gap-1 ${valueClass(node)}`}>
+        {node.kind === 'ref' &&
+          (node.cycle ? (
+            <Cycle className="shrink-0 text-[11px]" />
+          ) : (
+            <SharedRef className="shrink-0 text-[11px]" />
+          ))}
+        <span className="truncate">{elide(preview(node))}</span>
+      </span>
 
-      <span className="ml-auto shrink-0 pl-3 font-mono text-[10px] text-slate-500">
+      <span className="tabular ml-auto shrink-0 pl-3 font-mono text-[10px] text-[color:var(--color-ink-subtle)]">
         {typeLabel(node)}
       </span>
 
-      {!isAddressable(node.id) && (
+      {!addressable && (
         // Set members and positional args have no access expression, so "copy path" would hand
         // the reader something that does not evaluate. Say so rather than offer a lie.
-        <span className="shrink-0 pl-1 text-[10px] text-slate-600" title="No access path">
-          ⌀
-        </span>
+        <NoPath
+          title="No access path — inside a set, a dict key, or a positional argument"
+          className="shrink-0 text-[10px] text-[color:var(--color-ink-subtle)]"
+        />
       )}
     </div>
   );
 }
 
 function rowClass(isSelected: boolean, isMatch: boolean): string {
+  // `cursor-default` is deliberate: this is a file-explorer style list, where a pointer cursor on
+  // every row reads as noise. The controls inside it do get `cursor-pointer`.
   const base =
-    'flex items-center gap-1.5 whitespace-nowrap py-[3px] pr-2 font-mono text-xs cursor-default';
+    'flex items-center gap-1.5 whitespace-nowrap py-[3px] pr-2 font-mono text-xs cursor-default transition-colors duration-150';
 
-  if (isSelected) return `${base} bg-sky-500/25 ring-1 ring-inset ring-sky-400/50`;
+  if (isSelected) return `${base} bg-sky-500/25 ring-1 ring-inset ring-sky-400/60`;
   if (isMatch) return `${base} bg-amber-400/15 hover:bg-amber-400/25`;
-  return `${base} hover:bg-slate-700/40`;
+  return `${base} hover:bg-slate-800/70`;
 }
 
 function labelClass(relation: ChildRelation | 'root'): string {
+  const base = 'shrink-0';
+
   switch (relation) {
     case 'field':
-      return 'shrink-0 text-violet-300';
+      return `${base} text-[color:var(--color-label-field)]`;
     case 'key':
-      return 'shrink-0 text-fuchsia-300';
+      return `${base} text-[color:var(--color-label-keynode)]`;
     case 'arg':
-      return 'shrink-0 text-slate-400';
     case 'item':
-      return 'shrink-0 text-slate-500';
+      return `${base} text-[color:var(--color-label-index)]`;
     default:
-      return 'shrink-0 text-sky-300';
+      return `${base} text-[color:var(--color-label-key)]`;
   }
 }
 
-function valueClass(kind: string): string {
-  switch (kind) {
+function valueClass(node: Node): string {
+  const base = '';
+
+  switch (node.kind) {
     case 'scalar':
-      return 'truncate text-emerald-300';
+      return `${base} text-[color:var(--color-node-scalar)]`;
     case 'opaque':
-      return 'truncate text-orange-300/90 italic';
+      return `${base} text-[color:var(--color-node-opaque)] italic`;
     case 'ref':
-      return 'truncate text-rose-300';
+      return `${base} text-[color:var(--color-node-ref)]`;
     default:
-      return 'truncate text-slate-400';
+      return `${base} text-[color:var(--color-node-container)]`;
   }
 }

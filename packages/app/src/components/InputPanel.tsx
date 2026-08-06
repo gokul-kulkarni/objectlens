@@ -7,6 +7,7 @@
 
 import { useCallback, useRef, useState } from 'react';
 import type { Detection } from '@objectlens/core';
+import { FileUp, Play, Spinner } from '@objectlens/icons';
 import { EXAMPLES } from '../examples.js';
 
 export interface InputPanelProps {
@@ -55,13 +56,16 @@ export function InputPanel({
         if (file !== undefined) void readFile(file);
       }}
     >
-      <div className="flex flex-wrap items-center gap-2">
-        <label htmlFor="format" className="text-xs text-slate-400">
+      <div className="flex items-center gap-2">
+        <label
+          htmlFor="format"
+          className="shrink-0 text-xs text-[color:var(--color-ink-subtle)]"
+        >
           Format
         </label>
         <select
           id="format"
-          className="rounded border border-slate-700 bg-slate-800 px-2 py-1 text-xs text-slate-200"
+          className="min-w-0 flex-1 cursor-pointer truncate rounded border border-slate-700 bg-slate-800 px-2 py-1 text-xs text-[color:var(--color-ink)] transition-colors duration-150 hover:border-slate-600"
           value={adapterId ?? 'auto'}
           onChange={(event) =>
             onChangeAdapter(event.target.value === 'auto' ? null : event.target.value)
@@ -79,10 +83,12 @@ export function InputPanel({
 
         <button
           type="button"
-          className="rounded border border-slate-700 px-2 py-1 text-xs text-slate-300 hover:bg-slate-800"
+          title="Open a file"
+          className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded border border-slate-700 px-2 py-1 text-xs text-[color:var(--color-ink-muted)] transition-colors duration-150 hover:bg-slate-800"
           onClick={() => fileInput.current?.click()}
         >
-          Open file…
+          <FileUp />
+          Open
         </button>
         <input
           ref={fileInput}
@@ -96,10 +102,11 @@ export function InputPanel({
 
         <button
           type="button"
-          className="ml-auto rounded bg-sky-600 px-3 py-1 text-xs font-medium text-white hover:bg-sky-500 disabled:opacity-40"
+          className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded bg-sky-700 px-3 py-1 text-xs font-medium text-white transition-colors duration-150 hover:bg-sky-800 disabled:cursor-not-allowed disabled:opacity-40"
           disabled={text.trim() === '' || status === 'parsing'}
           onClick={onParse}
         >
+          {status === 'parsing' ? <Spinner /> : <Play className="text-[9px]" />}
           {status === 'parsing' ? 'Parsing…' : 'Visualise'}
         </button>
       </div>
@@ -108,7 +115,7 @@ export function InputPanel({
         aria-label="Object source"
         spellCheck={false}
         placeholder="Paste repr() output, pprint output, or JSON — then press Visualise (⌘⏎)"
-        className="min-h-0 flex-1 resize-none rounded border border-slate-800 bg-slate-950 p-2 font-mono text-xs text-slate-200 outline-none focus:border-sky-700"
+        className="min-h-0 flex-1 resize-none rounded border border-slate-800 bg-slate-950 p-2 font-mono text-xs text-[color:var(--color-ink)] outline-none focus:border-sky-700"
         value={text}
         onChange={(event) => onChangeText(event.target.value)}
         onKeyDown={(event) => {
@@ -117,13 +124,13 @@ export function InputPanel({
       />
 
       <div className="flex flex-wrap gap-1.5">
-        <span className="py-0.5 text-[11px] text-slate-500">Examples:</span>
+        <span className="py-0.5 text-[11px] text-[color:var(--color-ink-subtle)]">Examples:</span>
         {EXAMPLES.map((example) => (
           <button
             key={example.name}
             type="button"
             title={example.description}
-            className="rounded border border-slate-800 px-1.5 py-0.5 text-[11px] text-slate-400 hover:border-slate-600 hover:text-slate-200"
+            className="cursor-pointer rounded border border-slate-800 px-2 py-1 text-[11px] text-[color:var(--color-ink-subtle)] transition-colors duration-150 hover:border-slate-600 hover:text-[color:var(--color-ink)]"
             onClick={() => onChangeText(example.text)}
           >
             {example.name}

@@ -13,6 +13,7 @@ import { useViewer } from './state/useViewer.js';
 import { InputPanel } from './components/InputPanel.jsx';
 import { Inspector } from './components/Inspector.jsx';
 import { DiagnosticsPanel } from './components/DiagnosticsPanel.jsx';
+import { Search, Spinner } from '@objectlens/icons';
 import { ResizeHandle } from './components/ResizeHandle.jsx';
 import { PANEL_LIMITS, usePanelSizes } from './state/usePanelSizes.js';
 
@@ -36,18 +37,18 @@ export function App() {
   const active = available.find((view) => view.id === state.viewId) ?? available[0];
 
   return (
-    <div className="flex h-full flex-col bg-slate-900 text-slate-200">
+    <div className="flex h-full flex-col bg-slate-900 text-[color:var(--color-ink)]">
       <header className="flex shrink-0 items-center gap-3 border-b border-slate-800 px-4 py-2">
         <h1 className="text-sm font-semibold tracking-tight">
-          Object<span className="text-sky-400">Lens</span>
+          Object<span className="text-[color:var(--color-brand)]">Lens</span>
         </h1>
-        <p className="hidden text-xs text-slate-500 sm:block">
+        <p className="hidden text-xs text-[color:var(--color-ink-subtle)] sm:block">
           Explore Python objects, JSON and more
         </p>
 
         {state.graph !== null && (
-          <div className="ml-auto flex items-center gap-3 text-xs text-slate-500">
-            <span>
+          <div className="ml-auto flex items-center gap-3 text-xs text-[color:var(--color-ink-subtle)]">
+            <span className="tabular">
               {state.graph.nodesById.size.toLocaleString()} nodes · {Math.round(state.elapsedMs)} ms
             </span>
             {available.length > 1 && (
@@ -57,10 +58,11 @@ export function App() {
                     key={view.id}
                     type="button"
                     title={view.description}
-                    className={`px-2 py-0.5 ${
+                    aria-pressed={view.id === active?.id}
+                    className={`cursor-pointer px-2 py-0.5 transition-colors duration-150 ${
                       view.id === active?.id
-                        ? 'bg-sky-600 text-white'
-                        : 'text-slate-300 hover:bg-slate-800'
+                        ? 'bg-sky-700 text-white'
+                        : 'text-[color:var(--color-ink-muted)] hover:bg-slate-800'
                     }`}
                     onClick={() => viewer.setView(view.id)}
                   >
@@ -108,16 +110,23 @@ export function App() {
 
         <div className="flex min-h-0 min-w-0 flex-1 flex-col">
           <div className="flex shrink-0 items-center gap-2 border-b border-slate-800 px-3 py-1.5">
-            <input
-              type="search"
-              aria-label="Search"
-              placeholder="Search keys and values…"
-              className="min-w-0 flex-1 rounded border border-slate-800 bg-slate-950 px-2 py-1 text-xs outline-none focus:border-sky-700"
-              value={state.query}
-              onChange={(event) => viewer.setQuery(event.target.value)}
-            />
+            <div className="relative min-w-0 flex-1">
+              <Search className="pointer-events-none absolute left-2 top-1/2 -translate-y-1/2 text-[11px] text-[color:var(--color-ink-subtle)]" />
+              <input
+                type="search"
+                aria-label="Search"
+                placeholder="Search keys and values…"
+                className="w-full rounded border border-slate-800 bg-slate-950 py-1 pl-7 pr-2 text-xs transition-colors duration-150 outline-none focus:border-sky-700"
+                value={state.query}
+                onChange={(event) => viewer.setQuery(event.target.value)}
+              />
+            </div>
             {searchResult !== null && (
-              <span className="shrink-0 text-[11px] text-slate-500">
+              <span
+                role="status"
+                aria-live="polite"
+                className="tabular shrink-0 text-[11px] text-[color:var(--color-ink-subtle)]"
+              >
                 {searchResult.matches.size}
                 {searchResult.truncated ? '+' : ''} match
                 {searchResult.matches.size === 1 ? '' : 'es'}
@@ -163,7 +172,7 @@ export function App() {
           {state.graph !== null ? (
             <Inspector graph={state.graph} selection={state.selection} onSelect={viewer.select} />
           ) : (
-            <p className="p-3 text-xs text-slate-500">No object loaded.</p>
+            <p className="p-3 text-xs text-[color:var(--color-ink-subtle)]">No object loaded.</p>
           )}
         </div>
       </main>
@@ -173,24 +182,40 @@ export function App() {
 
 function EmptyState({ status }: { readonly status: string }) {
   if (status === 'parsing') {
-    return <p className="p-6 text-sm text-slate-500">Parsing…</p>;
+    return (
+      <div
+        role="status"
+        aria-live="polite"
+        className="flex items-center gap-2 p-6 text-sm text-[color:var(--color-ink-subtle)]"
+      >
+        <Spinner className="text-base" />
+        Parsing…
+      </div>
+    );
   }
 
   if (status === 'failed') {
     return (
-      <p className="p-6 text-sm text-rose-400">
+      <p role="alert" className="p-6 text-sm text-[color:var(--color-danger)]">
         Nothing could be parsed from that input — see the diagnostics below.
       </p>
     );
   }
 
   return (
-    <div className="p-6 text-sm text-slate-500">
-      <p className="mb-3">
-        Paste a Python <code className="text-slate-300">repr()</code> dump or some JSON on the left,
-        then press <kbd className="rounded border border-slate-700 px-1">⌘⏎</kbd>.
+    <div className="max-w-md p-6 text-sm text-[color:var(--color-ink-subtle)]">
+      <p className="mb-3 leading-relaxed">
+        Paste a Python <code className="font-mono text-[color:var(--color-node-scalar)]">repr()</code>{' '}
+        dump or some JSON on the left, then press{' '}
+        <kbd className="rounded border border-slate-700 bg-slate-800 px-1.5 py-0.5 font-mono text-[11px] text-[color:var(--color-ink-muted)]">
+          ⌘&#9166;
+        </kbd>
+        .
       </p>
-      <p className="text-xs">Or load one of the examples to see what it does.</p>
+      <p className="text-xs leading-relaxed">
+        Or load one of the examples below the input — they cover cycles, bignums, and deliberately
+        malformed text.
+      </p>
     </div>
   );
 }

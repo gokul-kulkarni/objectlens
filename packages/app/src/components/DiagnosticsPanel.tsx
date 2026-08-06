@@ -7,6 +7,7 @@
 
 import { useState } from 'react';
 import type { Diagnostic, NodeId } from '@objectlens/core';
+import { ChevronDown, ChevronRight, ErrorIcon, WarningIcon } from '@objectlens/icons';
 
 export interface DiagnosticsPanelProps {
   readonly diagnostics: readonly Diagnostic[];
@@ -25,18 +26,22 @@ export function DiagnosticsPanel({ diagnostics, onSelect }: DiagnosticsPanelProp
     <div className="border-t border-slate-800 bg-slate-900/60 text-xs">
       <button
         type="button"
-        className="flex w-full items-center gap-2 px-3 py-1.5 text-left hover:bg-slate-800/60"
+        className="flex w-full cursor-pointer items-center gap-2 px-3 py-1.5 text-left transition-colors duration-150 hover:bg-slate-800/60"
         onClick={() => setOpen((value) => !value)}
         aria-expanded={open}
       >
-        <span className="text-slate-500">{open ? '▾' : '▸'}</span>
-        {errors > 0 && <span className="text-rose-400">{errors} error{errors === 1 ? '' : 's'}</span>}
+        {open ? (
+          <ChevronDown className="shrink-0 text-[color:var(--color-ink-subtle)]" />
+        ) : (
+          <ChevronRight className="shrink-0 text-[color:var(--color-ink-subtle)]" />
+        )}
+        {errors > 0 && <span className="text-[color:var(--color-danger)]">{errors} error{errors === 1 ? '' : 's'}</span>}
         {warnings > 0 && (
-          <span className="text-amber-400">
+          <span className="text-[color:var(--color-caution)]">
             {warnings} warning{warnings === 1 ? '' : 's'}
           </span>
         )}
-        <span className="text-slate-500">— the rest of the input was parsed normally</span>
+        <span className="text-[color:var(--color-ink-subtle)]">— the rest of the input was parsed normally</span>
       </button>
 
       {open && (
@@ -44,21 +49,29 @@ export function DiagnosticsPanel({ diagnostics, onSelect }: DiagnosticsPanelProp
           {diagnostics.map((diagnostic, index) => (
             <li
               key={`${diagnostic.message}-${index}`}
-              className="flex gap-2 border-b border-slate-800/60 px-3 py-1 last:border-0"
+              className="flex items-start gap-2 border-b border-slate-800/60 px-3 py-1 last:border-0"
             >
-              <span className={diagnostic.severity === 'error' ? 'text-rose-400' : 'text-amber-400'}>
-                {diagnostic.severity === 'error' ? '✕' : '!'}
-              </span>
+              {diagnostic.severity === 'error' ? (
+                <ErrorIcon
+                  title="Error"
+                  className="mt-0.5 shrink-0 text-[color:var(--color-danger)]"
+                />
+              ) : (
+                <WarningIcon
+                  title="Warning"
+                  className="mt-0.5 shrink-0 text-[color:var(--color-caution)]"
+                />
+              )}
               {diagnostic.line !== undefined && (
-                <span className="shrink-0 font-mono text-slate-500">
+                <span className="shrink-0 font-mono text-[color:var(--color-ink-subtle)]">
                   {diagnostic.line}:{diagnostic.column ?? 1}
                 </span>
               )}
-              <span className="text-slate-300">{diagnostic.message}</span>
+              <span className="text-[color:var(--color-ink-muted)]">{diagnostic.message}</span>
               {diagnostic.nodeId !== undefined && (
                 <button
                   type="button"
-                  className="ml-auto shrink-0 text-sky-400 hover:underline"
+                  className="ml-auto shrink-0 cursor-pointer rounded text-[color:var(--color-brand)] hover:underline"
                   onClick={() => onSelect(diagnostic.nodeId as NodeId)}
                 >
                   show

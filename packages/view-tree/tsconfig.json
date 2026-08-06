@@ -6,7 +6,19 @@
     "jsx": "react-jsx",
     "types": []
   },
-  "include": ["src/**/*"],
-  "exclude": ["src/**/*.test.ts", "src/**/*.test.tsx"],
-  "references": [{ "path": "../core" }]
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx"
+  ],
+  "references": [
+    {
+      "path": "../core"
+    },
+    {
+      "path": "../icons"
+    }
+  ]
 }

@@ -43,7 +43,9 @@ export function preview(node: Node): string {
       return node.text;
 
     case 'ref':
-      return node.cycle ? '↺ cycle' : '→ shared';
+      // Wording only. The glyph that used to live here is now an SVG drawn by the row, so this
+      // stays readable when it is copied as text or announced by a screen reader.
+      return node.cycle ? 'cycle' : 'shared';
 
     case 'map':
     case 'sequence':

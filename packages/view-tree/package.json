@@ -19,7 +19,8 @@
   },
   "dependencies": {
     "@objectlens/core": "workspace:*",
-    "@tanstack/react-virtual": "^3.13.12"
+    "@tanstack/react-virtual": "^3.13.12",
+    "@objectlens/icons": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=18",

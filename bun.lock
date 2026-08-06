@@ -4,6 +4,10 @@
   "workspaces": {
     "": {
       "name": "objectlens",
+      "dependencies": {
+        "@fontsource-variable/inter": "^5.3.0",
+        "@fontsource-variable/jetbrains-mono": "^5.3.0",
+      },
       "devDependencies": {
         "@tailwindcss/vite": "^4.3.3",
         "@testing-library/react": "^16.3.2",
@@ -42,6 +46,7 @@
         "@objectlens/adapter-json": "workspace:*",
         "@objectlens/adapter-python": "workspace:*",
         "@objectlens/core": "workspace:*",
+        "@objectlens/icons": "workspace:*",
         "@objectlens/view-tree": "workspace:*",
       },
     },
@@ -58,11 +63,19 @@
         "react",
       ],
     },
+    "packages/icons": {
+      "name": "@objectlens/icons",
+      "version": "0.1.0",
+      "peerDependencies": {
+        "react": ">=18",
+      },
+    },
     "packages/view-tree": {
       "name": "@objectlens/view-tree",
       "version": "0.1.0",
       "dependencies": {
         "@objectlens/core": "workspace:*",
+        "@objectlens/icons": "workspace:*",
         "@tanstack/react-virtual": "^3.13.12",
       },
       "peerDependencies": {
@@ -191,6 +204,10 @@
 
     "@exodus/bytes": ["@exodus/bytes@1.15.1", "", { "peerDependencies": { "@noble/hashes": "^1.8.0 || ^2.0.0" }, "optionalPeers": ["@noble/hashes"] }, "sha512-S6mL0yNB/Abt9Ei4tq8gDhcczc4S3+vQ4ra7vxnAf+YHC02srtqxKKZghx2Dq6p0e66THKwR6r8N6P95wEty7Q=="],
 
+    "@fontsource-variable/inter": ["@fontsource-variable/inter@5.3.0", "", {}, "sha512-OupL48va4JNofb97w6NYeF9S7W/kHNKM0Er8Dem5nqi4jeOLrVJDoE8tZEpnMJmtkvNbB1EIPPwHcdkF6b1oUA=="],
+
+    "@fontsource-variable/jetbrains-mono": ["@fontsource-variable/jetbrains-mono@5.3.0", "", {}, "sha512-F32xpS2NsGYoQi2ADSkKTgpJj7ozajsGgDJ8woTnqjmIB+dxDIqImjl4pXZVEExu8UFZ2ndhmX18EBS/hdz3Lw=="],
+
     "@isaacs/cliui": ["@isaacs/cliui@8.0.2", "", { "dependencies": { "string-width": "^5.1.2", "string-width-cjs": "npm:string-width@^4.2.0", "strip-ansi": "^7.0.1", "strip-ansi-cjs": "npm:strip-ansi@^6.0.1", "wrap-ansi": "^8.1.0", "wrap-ansi-cjs": "npm:wrap-ansi@^7.0.0" } }, "sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA=="],
 
     "@istanbuljs/schema": ["@istanbuljs/schema@0.1.6", "", {}, "sha512-+Sg6GCR/wy1oSmQDFq4LQDAhm3ETKnorxN+y5nbLULOR3P0c14f2Wurzj3/xqPXtasLFfHd5iRFQ7AJt4KH2cw=="],
@@ -214,6 +231,8 @@
     "@objectlens/app": ["@objectlens/app@workspace:packages/app"],
 
     "@objectlens/core": ["@objectlens/core@workspace:packages/core"],
+
+    "@objectlens/icons": ["@objectlens/icons@workspace:packages/icons"],
 
     "@objectlens/view-tree": ["@objectlens/view-tree@workspace:packages/view-tree"],
 

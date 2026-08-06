@@ -1,5 +1,64 @@
 @import 'tailwindcss';
 
+/*
+ * Fonts are bundled, not fetched.
+ *
+ * The same build is served from 127.0.0.1 by the local Python package, often with no network at
+ * all. A Google Fonts <link> would hang or silently fall back exactly when someone is debugging
+ * offline, so both faces ship in the bundle as woff2 subsets.
+ */
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/jetbrains-mono';
+
+/*
+ * Semantic tokens.
+ *
+ * Node colours live here rather than in the tree view because they are a property of the *IR*,
+ * not of one rendering of it: when the graph view lands, a scalar has to be the same green in
+ * both or the two views stop reading as one picture.
+ */
+@theme {
+  --font-sans:
+    'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono:
+    'JetBrains Mono Variable', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  /* Surfaces, darkest to lightest. */
+  --color-surface: var(--color-slate-900);
+  --color-surface-sunken: var(--color-slate-950);
+  --color-surface-raised: var(--color-slate-800);
+  --color-line: var(--color-slate-800);
+  --color-line-strong: var(--color-slate-700);
+
+  /*
+   * Text. Every value here clears WCAG AA (4.5:1) on --color-surface.
+   * `slate-500` measured 3.75:1 and `slate-600` 2.36:1, so neither may carry text — they survive
+   * only as `--color-ink-faint` for non-informational marks like separators.
+   */
+  --color-ink: var(--color-slate-200); /* 14.5:1 */
+  --color-ink-muted: var(--color-slate-300); /* 12.0:1 */
+  --color-ink-subtle: var(--color-slate-400); /*  7.0:1 */
+  --color-ink-faint: var(--color-slate-600); /* decorative only — never text */
+
+  --color-brand: var(--color-sky-400); /*  8.3:1 */
+  --color-brand-strong: var(--color-sky-600);
+
+  /* Node kinds, shared by every view. */
+  --color-node-scalar: var(--color-emerald-300); /* 11.7:1 */
+  --color-node-opaque: var(--color-orange-300); /* 10.6:1 */
+  --color-node-ref: var(--color-rose-300); /*  9.4:1 */
+  --color-node-container: var(--color-slate-400); /*  7.0:1 */
+
+  /* Edge labels: how a child is reached from its parent. */
+  --color-label-key: var(--color-sky-300); /* 10.7:1 */
+  --color-label-field: var(--color-violet-300); /*  9.7:1 */
+  --color-label-keynode: var(--color-fuchsia-300); /* 10.2:1 */
+  --color-label-index: var(--color-slate-400); /*  7.0:1 */
+
+  --color-danger: var(--color-rose-300);
+  --color-caution: var(--color-amber-300);
+}
+
 html,
 body,
 #root {
@@ -8,4 +67,40 @@ body,
 
 body {
   overscroll-behavior: none;
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  /* Dense UI at small sizes: without this, stems look ragged on non-retina displays. */
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/*
+ * A visible focus ring on every keyboard focus, and never a bare `outline: none`.
+ * `:focus-visible` keeps it off for pointer users, so it costs the mouse path nothing.
+ */
+:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 1px;
+  border-radius: 2px;
+}
+
+/* Tabular numerals stop counts from jittering as they update. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * Motion is decoration here — nothing in this UI conveys meaning by moving. Honouring the OS
+ * preference costs nothing and removes it entirely for anyone who asked for that.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

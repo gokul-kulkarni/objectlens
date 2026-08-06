@@ -4,15 +4,33 @@
     "rootDir": "./src",
     "outDir": "./dist-types",
     "jsx": "react-jsx",
-    "types": ["vite/client"],
+    "types": [
+      "vite/client"
+    ],
     "noEmit": false
   },
-  "include": ["src/**/*"],
-  "exclude": ["src/**/*.test.ts", "src/**/*.test.tsx"],
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx"
+  ],
   "references": [
-    { "path": "../core" },
-    { "path": "../adapter-json" },
-    { "path": "../adapter-python" },
-    { "path": "../view-tree" }
+    {
+      "path": "../core"
+    },
+    {
+      "path": "../adapter-json"
+    },
+    {
+      "path": "../adapter-python"
+    },
+    {
+      "path": "../view-tree"
+    },
+    {
+      "path": "../icons"
+    }
   ]
 }
