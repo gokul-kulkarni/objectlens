@@ -1,0 +1,23 @@
+{
+  "name": "@objectlens/adapter-json",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "JSON source adapter for ObjectLens.",
+  "license": "MIT",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "files": [
+    "src",
+    "dist"
+  ],
+  "scripts": {
+    "typecheck": "tsc --build"
+  },
+  "dependencies": {
+    "@objectlens/core": "0.1.0"
+  }
+}
