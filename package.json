@@ -1,0 +1,27 @@
+{
+  "name": "objectlens",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Explore structured objects from any language as a tree or graph.",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "dev": "npm run dev --workspace @objectlens/app",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --build --verbose",
+    "clean": "tsc --build --clean"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^3.2.4",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
