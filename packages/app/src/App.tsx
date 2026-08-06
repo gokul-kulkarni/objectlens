@@ -6,18 +6,21 @@
  * render the current graph, so a new view appears without this file changing.
  */
 
-import { useMemo } from 'react';
+import { useMemo, type CSSProperties } from 'react';
 import { InMemoryNodeSource } from '@objectlens/core';
 import { views } from './registry.js';
 import { useViewer } from './state/useViewer.js';
 import { InputPanel } from './components/InputPanel.jsx';
 import { Inspector } from './components/Inspector.jsx';
 import { DiagnosticsPanel } from './components/DiagnosticsPanel.jsx';
+import { ResizeHandle } from './components/ResizeHandle.jsx';
+import { PANEL_LIMITS, usePanelSizes } from './state/usePanelSizes.js';
 
 const EMPTY_MATCHES: ReadonlySet<string> = new Set();
 
 export function App() {
   const viewer = useViewer();
+  const { sizes, setPanel, adjustPanel, resetPanel } = usePanelSizes();
   const { state, detections, effectiveAdapterId, searchResult } = viewer;
 
   const nodeSource = useMemo(
@@ -70,8 +73,16 @@ export function App() {
         )}
       </header>
 
-      <main className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[minmax(280px,26rem)_1fr_minmax(240px,20rem)]">
-        <div className="min-h-0 border-b border-slate-800 lg:border-b-0 lg:border-r">
+      {/*
+        Flex rather than grid: the panels are user-resizable, so their widths are inline styles
+        driven by the drag handles. Below `lg` this stacks vertically and the handles hide, since
+        dragging a divider on a phone is not a thing anyone wants to do.
+      */}
+      <main className="flex min-h-0 flex-1 flex-col lg:flex-row">
+        <div
+          className="min-h-0 shrink-0 border-b border-slate-800 lg:w-[var(--left-panel)] lg:border-b-0"
+          style={{ '--left-panel': `${sizes.left}px` } as CSSProperties}
+        >
           <InputPanel
             text={state.text}
             detections={detections}
@@ -84,7 +95,18 @@ export function App() {
           />
         </div>
 
-        <div className="flex min-h-0 flex-col">
+        <ResizeHandle
+          label="Resize input panel"
+          value={sizes.left}
+          min={PANEL_LIMITS.left.min}
+          max={PANEL_LIMITS.left.max}
+          side="left"
+          onResize={(width) => setPanel('left', width)}
+          onAdjust={(delta) => adjustPanel('left', delta)}
+          onReset={() => resetPanel('left')}
+        />
+
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
           <div className="flex shrink-0 items-center gap-2 border-b border-slate-800 px-3 py-1.5">
             <input
               type="search"
@@ -123,7 +145,21 @@ export function App() {
           <DiagnosticsPanel diagnostics={state.diagnostics} onSelect={viewer.select} />
         </div>
 
-        <div className="min-h-0 border-t border-slate-800 lg:border-l lg:border-t-0">
+        <ResizeHandle
+          label="Resize inspector panel"
+          value={sizes.right}
+          min={PANEL_LIMITS.right.min}
+          max={PANEL_LIMITS.right.max}
+          side="right"
+          onResize={(width) => setPanel('right', width)}
+          onAdjust={(delta) => adjustPanel('right', delta)}
+          onReset={() => resetPanel('right')}
+        />
+
+        <div
+          className="min-h-0 shrink-0 border-t border-slate-800 lg:w-[var(--right-panel)] lg:border-t-0"
+          style={{ '--right-panel': `${sizes.right}px` } as CSSProperties}
+        >
           {state.graph !== null ? (
             <Inspector graph={state.graph} selection={state.selection} onSelect={viewer.select} />
           ) : (

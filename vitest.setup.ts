@@ -68,6 +68,26 @@ if (typeof window !== 'undefined') {
     globalThis.ResizeObserver = ResizeObserverStub;
   }
 
+  // jsdom implements no Pointer Capture API, so any component using it to track a drag would
+  // throw on the first pointerdown.
+  if (typeof Element.prototype.setPointerCapture !== 'function') {
+    const captured = new WeakMap<Element, Set<number>>();
+
+    Element.prototype.setPointerCapture = function setPointerCapture(pointerId: number): void {
+      const ids = captured.get(this) ?? new Set<number>();
+      ids.add(pointerId);
+      captured.set(this, ids);
+    };
+
+    Element.prototype.releasePointerCapture = function releasePointerCapture(id: number): void {
+      captured.get(this)?.delete(id);
+    };
+
+    Element.prototype.hasPointerCapture = function hasPointerCapture(id: number): boolean {
+      return captured.get(this)?.has(id) ?? false;
+    };
+  }
+
   // The virtualiser schedules its measurement through requestAnimationFrame, which jsdom never
   // runs inside a synchronous test. Running the callback immediately makes layout observable.
   globalThis.requestAnimationFrame = ((callback: FrameRequestCallback): number => {
