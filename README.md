@@ -9,19 +9,22 @@ a log and makes it explorable.
 
 ## Status
 
-Early. Phase 1 of 9 complete: the core IR, both plugin registries, and node sources.
+**Runnable and shippable.** Paste `repr()` output or JSON and explore it as a tree. Parsing runs
+in a Worker; the build is static with no backend.
 
 | Phase | | |
 | --- | --- | --- |
 | 1 | Core IR + registries | ✅ done |
-| 2 | JSON adapter | next |
-| 3 | Python `repr()` adapter | |
-| 4 | Tree view | |
-| 5 | Graph view | |
-| 6 | App shell + hosted site | first shippable milestone |
+| 2 | JSON adapter | ✅ done |
+| 3 | Python `repr()` adapter | ✅ done |
+| 4 | Tree view | ✅ done |
+| 6 | App shell + static site | ✅ done — first shippable milestone |
+| 5 | Graph view | ← next |
 | 7 | Zero-install export snippet | |
 | 8 | Python live mode | |
 | 9 | YAML adapter + plugin guide | extensibility proof |
+
+461 tests, 86.9% line coverage. `npm run dev` and paste something.
 
 ## Architecture
 
