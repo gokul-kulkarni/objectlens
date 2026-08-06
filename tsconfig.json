@@ -1,4 +1,8 @@
 {
   "files": [],
-  "references": [{ "path": "./packages/core" }, { "path": "./packages/adapter-json" }]
+  "references": [
+    { "path": "./packages/core" },
+    { "path": "./packages/adapter-json" },
+    { "path": "./packages/adapter-python" }
+  ]
 }

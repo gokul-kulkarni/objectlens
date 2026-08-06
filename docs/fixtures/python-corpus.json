@@ -1,0 +1,326 @@
+{
+  "generatedBy": "python/fixtures/generate_corpus.py",
+  "pythonVersion": "3.13.3",
+  "cases": [
+    {
+      "group": "scalar",
+      "name": "none",
+      "repr": "None"
+    },
+    {
+      "group": "scalar",
+      "name": "true",
+      "repr": "True"
+    },
+    {
+      "group": "scalar",
+      "name": "false",
+      "repr": "False"
+    },
+    {
+      "group": "scalar",
+      "name": "int",
+      "repr": "42"
+    },
+    {
+      "group": "scalar",
+      "name": "negative_int",
+      "repr": "-7"
+    },
+    {
+      "group": "scalar",
+      "name": "zero",
+      "repr": "0"
+    },
+    {
+      "group": "scalar",
+      "name": "bignum",
+      "repr": "9007199254740993"
+    },
+    {
+      "group": "scalar",
+      "name": "huge_int",
+      "repr": "1208925819614629174706176"
+    },
+    {
+      "group": "scalar",
+      "name": "float",
+      "repr": "4.25"
+    },
+    {
+      "group": "scalar",
+      "name": "negative_float",
+      "repr": "-0.5"
+    },
+    {
+      "group": "scalar",
+      "name": "exponent",
+      "repr": "1e+300"
+    },
+    {
+      "group": "scalar",
+      "name": "infinity",
+      "repr": "inf"
+    },
+    {
+      "group": "scalar",
+      "name": "negative_infinity",
+      "repr": "-inf"
+    },
+    {
+      "group": "scalar",
+      "name": "not_a_number",
+      "repr": "nan"
+    },
+    {
+      "group": "scalar",
+      "name": "complex",
+      "repr": "(1+2j)"
+    },
+    {
+      "group": "scalar",
+      "name": "complex_negative",
+      "repr": "(1-2j)"
+    },
+    {
+      "group": "scalar",
+      "name": "imaginary_only",
+      "repr": "3j"
+    },
+    {
+      "group": "string",
+      "name": "simple",
+      "repr": "'hello'"
+    },
+    {
+      "group": "string",
+      "name": "empty",
+      "repr": "''"
+    },
+    {
+      "group": "string",
+      "name": "with_apostrophe",
+      "repr": "\"it's\""
+    },
+    {
+      "group": "string",
+      "name": "with_double_quote",
+      "repr": "'say \"hi\"'"
+    },
+    {
+      "group": "string",
+      "name": "with_both_quotes",
+      "repr": "'it\\'s a \"quote\"'"
+    },
+    {
+      "group": "string",
+      "name": "newline",
+      "repr": "'a\\nb'"
+    },
+    {
+      "group": "string",
+      "name": "tab",
+      "repr": "'a\\tb'"
+    },
+    {
+      "group": "string",
+      "name": "backslash",
+      "repr": "'a\\\\b'"
+    },
+    {
+      "group": "string",
+      "name": "non_ascii",
+      "repr": "'café'"
+    },
+    {
+      "group": "string",
+      "name": "emoji",
+      "repr": "'🐍'"
+    },
+    {
+      "group": "string",
+      "name": "null_byte",
+      "repr": "'a\\x00b'"
+    },
+    {
+      "group": "string",
+      "name": "bytes",
+      "repr": "b'ab\\x00c'"
+    },
+    {
+      "group": "string",
+      "name": "bytes_ascii",
+      "repr": "b'plain'"
+    },
+    {
+      "group": "container",
+      "name": "empty_list",
+      "repr": "[]"
+    },
+    {
+      "group": "container",
+      "name": "list",
+      "repr": "[1, 2, 3]"
+    },
+    {
+      "group": "container",
+      "name": "empty_tuple",
+      "repr": "()"
+    },
+    {
+      "group": "container",
+      "name": "single_tuple",
+      "repr": "(1,)"
+    },
+    {
+      "group": "container",
+      "name": "tuple",
+      "repr": "(1, 'two', 3.0)"
+    },
+    {
+      "group": "container",
+      "name": "empty_dict",
+      "repr": "{}"
+    },
+    {
+      "group": "container",
+      "name": "dict",
+      "repr": "{'a': 1, 'b': 2}"
+    },
+    {
+      "group": "container",
+      "name": "empty_set",
+      "repr": "set()"
+    },
+    {
+      "group": "container",
+      "name": "set",
+      "repr": "{1}"
+    },
+    {
+      "group": "container",
+      "name": "frozenset",
+      "repr": "frozenset({1})"
+    },
+    {
+      "group": "container",
+      "name": "nested",
+      "repr": "{'users': [User(id=1, name='ada')], 'n': 2}"
+    },
+    {
+      "group": "container",
+      "name": "tuple_key",
+      "repr": "{(1, 2): 'x'}"
+    },
+    {
+      "group": "container",
+      "name": "int_key",
+      "repr": "{1: 'one'}"
+    },
+    {
+      "group": "container",
+      "name": "mixed",
+      "repr": "[1, 'two', None, True, 3.5, [4], {'k': 'v'}]"
+    },
+    {
+      "group": "container",
+      "name": "list_of_dicts",
+      "repr": "[{'id': 1}, {'id': 2}]"
+    },
+    {
+      "group": "container",
+      "name": "shared_reference",
+      "repr": "[{'shared': True}, {'shared': True}]"
+    },
+    {
+      "group": "stdlib",
+      "name": "ordered_dict",
+      "repr": "OrderedDict({'a': 1, 'b': 2})"
+    },
+    {
+      "group": "stdlib",
+      "name": "counter",
+      "repr": "Counter({'a': 2})"
+    },
+    {
+      "group": "stdlib",
+      "name": "default_dict",
+      "repr": "defaultdict(<class 'int'>, {'a': 1})"
+    },
+    {
+      "group": "stdlib",
+      "name": "deque",
+      "repr": "deque([1, 2])"
+    },
+    {
+      "group": "stdlib",
+      "name": "namedtuple",
+      "repr": "Point(x=1, y=2)"
+    },
+    {
+      "group": "constructor",
+      "name": "datetime",
+      "repr": "datetime.datetime(2024, 1, 2, 3, 4, 5)"
+    },
+    {
+      "group": "constructor",
+      "name": "date",
+      "repr": "datetime.date(2024, 1, 2)"
+    },
+    {
+      "group": "constructor",
+      "name": "timedelta",
+      "repr": "datetime.timedelta(days=1, seconds=30)"
+    },
+    {
+      "group": "constructor",
+      "name": "decimal",
+      "repr": "Decimal('1.50')"
+    },
+    {
+      "group": "constructor",
+      "name": "uuid",
+      "repr": "UUID('00000000-0000-0000-0000-000000000001')"
+    },
+    {
+      "group": "constructor",
+      "name": "dataclass",
+      "repr": "User(id=1, name='ada')"
+    },
+    {
+      "group": "constructor",
+      "name": "dataclass_nested",
+      "repr": "User(id=1, name=\"it's ada\")"
+    },
+    {
+      "group": "angle",
+      "name": "instance",
+      "repr": "<__main__.Plain object at 0x100d71940>"
+    },
+    {
+      "group": "angle",
+      "name": "class",
+      "repr": "<class 'int'>"
+    },
+    {
+      "group": "angle",
+      "name": "builtin_function",
+      "repr": "<built-in function len>"
+    },
+    {
+      "group": "angle",
+      "name": "enum_member",
+      "repr": "<Color.RED: 1>"
+    },
+    {
+      "group": "recursion",
+      "name": "recursive_list",
+      "repr": "[[...]]"
+    },
+    {
+      "group": "recursion",
+      "name": "recursive_dict",
+      "repr": "{'self': {...}}"
+    }
+  ]
+}

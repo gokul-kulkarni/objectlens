@@ -72,6 +72,7 @@ export type {
 } from './adapter/types.js';
 
 export { SourceAdapterRegistry, sourceAdapters, type Detection } from './adapter/registry.js';
+export { MAX_PARSE_DEPTH, MAX_INPUT_BYTES } from './adapter/limits.js';
 
 // Views (axis 2: IR -> rendering)
 export type { ViewPlugin, ViewProps } from './view/types.js';

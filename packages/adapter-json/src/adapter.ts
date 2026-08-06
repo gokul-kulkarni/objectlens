@@ -8,6 +8,7 @@
 
 import {
   buildGraph,
+  MAX_INPUT_BYTES,
   parseError,
   type ParseContext,
   type ParseResult,
@@ -16,9 +17,6 @@ import {
 } from '@objectlens/core';
 import { JSON_SOURCE_ID, parseJson } from './parser.js';
 import { sniffJson } from './sniff.js';
-
-/** Above this the browser tab is at risk, so refuse with an explanation rather than freeze. */
-const DEFAULT_MAX_BYTES = 25 * 1024 * 1024;
 
 export const jsonAdapter: SourceAdapter = {
   id: JSON_SOURCE_ID,
@@ -29,7 +27,7 @@ export const jsonAdapter: SourceAdapter = {
   sniff: sniffJson,
 
   parse(input: RawInput, context: ParseContext = {}): ParseResult {
-    const maxBytes = context.maxBytes ?? DEFAULT_MAX_BYTES;
+    const maxBytes = context.maxBytes ?? MAX_INPUT_BYTES;
 
     if (input.text.length > maxBytes) {
       return {

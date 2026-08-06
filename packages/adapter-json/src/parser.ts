@@ -14,6 +14,7 @@ import {
   parseError,
   parseWarning,
   positionAt,
+  MAX_PARSE_DEPTH,
   ROOT_ID,
   type Diagnostic,
   type IdAllocator,
@@ -24,12 +25,6 @@ import {
 import { COMMENT, tokenize, type Token, type TokenType } from './lexer.js';
 
 export const JSON_SOURCE_ID = 'json';
-
-/**
- * Depth cap. JSON nests shallowly in practice, so this only ever fires on pathological or hostile
- * input — where the alternative is a stack overflow that takes the tab down.
- */
-const MAX_DEPTH = 1000;
 
 export interface JsonParseOutcome {
   readonly root: Node;
@@ -99,9 +94,9 @@ class JsonParser {
   // ---- values -------------------------------------------------------------
 
   #parseValue(id: NodeId, depth: number): Node {
-    if (depth > MAX_DEPTH) {
+    if (depth > MAX_PARSE_DEPTH) {
       this.#truncated = true;
-      this.#error(`Nesting deeper than ${MAX_DEPTH} levels was not parsed`, this.#peek());
+      this.#error(`Nesting deeper than ${MAX_PARSE_DEPTH} levels was not parsed`, this.#peek());
       this.#skipValue();
       return this.#opaque(id, '…', 'too deep');
     }
