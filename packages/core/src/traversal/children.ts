@@ -74,9 +74,10 @@ function mapChildren(node: Extract<Node, { kind: 'map' }>): readonly ChildRef[] 
 
     if (label === null) {
       // A structural key — `{(1, 2): 'x'}`. Surface it as its own row so it stays explorable,
-      // then the value follows, labelled by position rather than by an unrenderable key.
-      refs.push({ node: entry.key, label: `key ${index}`, relation: 'key', index });
-      refs.push({ node: entry.value, label: `value ${index}`, relation: 'value', index });
+      // then the value follows. The labels are bracketed rather than numbered: an index here
+      // reads as a key *named* "6", which is exactly the confusion to avoid.
+      refs.push({ node: entry.key, label: '⟨key⟩', relation: 'key', index });
+      refs.push({ node: entry.value, label: '⟨value⟩', relation: 'value', index });
       return;
     }
 

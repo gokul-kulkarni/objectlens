@@ -36,6 +36,7 @@ describe('childrenOf', () => {
     const children = childrenOf(node);
 
     expect(children.map((c) => c.relation)).toEqual(['key', 'value']);
+    expect(children.map((c) => c.label)).toEqual(['⟨key⟩', '⟨value⟩']);
     expect(children[0]?.node).toBe(key);
   });
 

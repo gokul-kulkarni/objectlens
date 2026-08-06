@@ -1,8 +1,20 @@
 {
   "files": [],
   "references": [
-    { "path": "./packages/core" },
-    { "path": "./packages/adapter-json" },
-    { "path": "./packages/adapter-python" }
+    {
+      "path": "./packages/core"
+    },
+    {
+      "path": "./packages/adapter-json"
+    },
+    {
+      "path": "./packages/adapter-python"
+    },
+    {
+      "path": "./packages/view-tree"
+    },
+    {
+      "path": "./packages/app"
+    }
   ]
 }

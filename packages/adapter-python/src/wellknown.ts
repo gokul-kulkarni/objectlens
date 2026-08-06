@@ -58,11 +58,61 @@ function asSet(id: NodeId, source: SourceId, typeName: string, call: CallShape):
 
   // `frozenset({1, 2})` — adopt the inner set's items under this node's id.
   if (inner.kind === 'set' || inner.kind === 'sequence') {
-    const items = inner.kind === 'set' ? inner.items : inner.items;
-    return { id, kind: 'set', source, typeName, items };
+    return { id, kind: 'set', source, typeName, items: rebaseAll(inner.items, inner.id, id) };
   }
 
   return undefined;
+}
+
+/**
+ * Rewrites ids after a container is adopted out of a constructor argument.
+ *
+ * The parser gave the argument a positional id (`$['counter']@arg0`), because it could not know
+ * the call was a mapping until the callee was matched. Left alone, every entry inherits that
+ * `@arg0` segment and is reported as having no access expression — but `counter['a']` is perfectly
+ * good Python. Rebasing restores the paths the reader can actually paste.
+ */
+function rebase(node: Node, from: NodeId, to: NodeId): Node {
+  const id = node.id.startsWith(from) ? to + node.id.slice(from.length) : node.id;
+
+  switch (node.kind) {
+    case 'map':
+      return {
+        ...node,
+        id,
+        entries: node.entries.map((entry) => ({
+          key: rebase(entry.key, from, to),
+          value: rebase(entry.value, from, to),
+        })),
+      };
+
+    case 'sequence':
+    case 'set':
+      return { ...node, id, items: rebaseAll(node.items, from, to) };
+
+    case 'object':
+      return {
+        ...node,
+        id,
+        fields: node.fields.map((field) => ({ ...field, value: rebase(field.value, from, to) })),
+        ...(node.args === undefined ? {} : { args: rebaseAll(node.args, from, to) }),
+      };
+
+    case 'ref':
+      // A cycle pointing into the adopted subtree has to follow it.
+      return {
+        ...node,
+        id,
+        target: node.target.startsWith(from) ? to + node.target.slice(from.length) : node.target,
+      };
+
+    default:
+      return { ...node, id };
+  }
+}
+
+function rebaseAll(nodes: readonly Node[], from: NodeId, to: NodeId): readonly Node[] {
+  return nodes.map((node) => rebase(node, from, to));
 }
 
 /**
@@ -90,7 +140,10 @@ function asMap(id: NodeId, source: SourceId, typeName: string, call: CallShape):
     kind: 'map',
     source,
     typeName,
-    entries: mapping.entries,
+    entries: mapping.entries.map((entry) => ({
+      key: rebase(entry.key, mapping.id, id),
+      value: rebase(entry.value, mapping.id, id),
+    })),
     ...(meta === undefined ? {} : { meta }),
   };
 }

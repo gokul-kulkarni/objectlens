@@ -1,0 +1,19 @@
+{
+  "name": "@objectlens/app",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "description": "The ObjectLens web app: wires adapters and views together.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --build"
+  },
+  "dependencies": {
+    "@objectlens/adapter-json": "0.1.0",
+    "@objectlens/adapter-python": "0.1.0",
+    "@objectlens/core": "0.1.0",
+    "@objectlens/view-tree": "0.1.0"
+  }
+}
