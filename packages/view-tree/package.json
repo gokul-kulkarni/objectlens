@@ -4,12 +4,25 @@
   "type": "module",
   "description": "Virtualised tree view plugin for ObjectLens.",
   "license": "MIT",
-  "exports": { ".": { "types": "./src/index.ts", "default": "./src/index.ts" } },
-  "files": ["src", "dist"],
-  "scripts": { "typecheck": "tsc --build" },
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "files": [
+    "src",
+    "dist"
+  ],
+  "scripts": {
+    "typecheck": "tsc --build"
+  },
   "dependencies": {
-    "@objectlens/core": "0.1.0",
+    "@objectlens/core": "workspace:*",
     "@tanstack/react-virtual": "^3.13.12"
   },
-  "peerDependencies": { "react": ">=18", "react-dom": ">=18" }
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  }
 }

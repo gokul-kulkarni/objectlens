@@ -18,6 +18,6 @@
     "typecheck": "tsc --build"
   },
   "dependencies": {
-    "@objectlens/core": "0.1.0"
+    "@objectlens/core": "workspace:*"
   }
 }

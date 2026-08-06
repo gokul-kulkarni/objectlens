@@ -24,7 +24,7 @@ in a Worker; the build is static with no backend.
 | 8 | Python live mode | |
 | 9 | YAML adapter + plugin guide | extensibility proof |
 
-461 tests, 86.9% line coverage. `npm run dev` and paste something.
+502 tests, 86.8% line coverage. `bun run dev` and paste something.
 
 ## Architecture
 
@@ -75,12 +75,23 @@ public HTTPS page from fetching `http://localhost`.
 
 ## Development
 
+Requires [Bun](https://bun.sh) (developed against 1.3).
+
 ```bash
-npm install
-npm test              # vitest, 80% coverage gate
-npm run typecheck     # tsc project references, strict
-npm run dev           # (from phase 6) the Vite site
+bun install
+bun run test          # vitest, 80% coverage gate
+bun run typecheck     # tsc project references, strict
+bun run dev           # the Vite site on :5173
+bun run build         # static output in packages/app/dist
 ```
+
+Bun is the package manager and script runner; Vitest and Vite still run on Node under the hood, so
+nothing depends on Bun-specific runtime behaviour. Internal packages are wired with the
+`workspace:*` protocol, which always resolves to the local copy rather than a version string that
+has to be bumped in lockstep.
+
+`esbuild` is listed under `trustedDependencies` because Bun blocks lifecycle scripts by default and
+esbuild's postinstall fetches its platform binary — Vite and Vitest are unusable without it.
 
 ## Layout
 

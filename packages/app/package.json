@@ -11,9 +11,9 @@
     "typecheck": "tsc --build"
   },
   "dependencies": {
-    "@objectlens/adapter-json": "0.1.0",
-    "@objectlens/adapter-python": "0.1.0",
-    "@objectlens/core": "0.1.0",
-    "@objectlens/view-tree": "0.1.0"
+    "@objectlens/adapter-json": "workspace:*",
+    "@objectlens/adapter-python": "workspace:*",
+    "@objectlens/core": "workspace:*",
+    "@objectlens/view-tree": "workspace:*"
   }
 }
