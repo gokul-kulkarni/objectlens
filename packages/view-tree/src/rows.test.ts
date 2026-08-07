@@ -11,7 +11,7 @@ import {
   seq,
   str,
 } from '@objectlens/core/testing';
-import { expandAll, flatten, initialExpansion, toggle } from './rows.js';
+import { flatten } from './rows.js';
 
 const graph = () =>
   buildGraph(
@@ -95,59 +95,5 @@ describe('flatten', () => {
     const expanded = new Set([...chain.nodesById.keys()]);
 
     expect(() => flatten(chain, { expanded })).not.toThrow();
-  });
-});
-
-describe('initialExpansion', () => {
-  it('expands enough to show structure on first render', () => {
-    const expanded = initialExpansion(graph());
-
-    expect(expanded.has('$')).toBe(true);
-    expect(expanded.has(`$['users']`)).toBe(true);
-  });
-
-  it('stops at the node budget so a huge graph does not arrive fully expanded', () => {
-    const wide = buildGraph(
-      seq('$', Array.from({ length: 1_000 }, (_, i) => seq(`$[${i}]`, [int(`$[${i}][0]`, i)]))),
-      TEST_SOURCE,
-    );
-
-    const rows = flatten(wide, { expanded: initialExpansion(wide, 50) });
-    expect(rows.length).toBeLessThan(1_100);
-  });
-
-  it('does not expand leaves', () => {
-    expect(initialExpansion(buildGraph(int('$', 1), TEST_SOURCE)).has('$')).toBe(false);
-  });
-});
-
-describe('toggle', () => {
-  it('adds an id that was collapsed and removes one that was expanded', () => {
-    const collapsed: ReadonlySet<NodeId> = new Set();
-
-    const expanded = toggle(collapsed, '$');
-    expect(expanded.has('$')).toBe(true);
-
-    expect(toggle(expanded, '$').has('$')).toBe(false);
-  });
-
-  it('returns a new set rather than mutating the old one', () => {
-    const original: ReadonlySet<NodeId> = new Set(['$']);
-    const next = toggle(original, '$.a');
-
-    expect(next).not.toBe(original);
-    expect(original.has('$.a')).toBe(false);
-  });
-});
-
-describe('expandAll', () => {
-  it('adds every id without dropping existing ones', () => {
-    const result = expandAll(new Set(['$']), ['$.a', '$.b']);
-    expect([...result].sort()).toEqual(['$', '$.a', '$.b']);
-  });
-
-  it('returns a new set', () => {
-    const original: ReadonlySet<NodeId> = new Set(['$']);
-    expect(expandAll(original, ['$.a'])).not.toBe(original);
   });
 });

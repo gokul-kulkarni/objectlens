@@ -14,7 +14,8 @@
     "@objectlens/adapter-json": "workspace:*",
     "@objectlens/adapter-python": "workspace:*",
     "@objectlens/core": "workspace:*",
-    "@objectlens/view-tree": "workspace:*",
-    "@objectlens/icons": "workspace:*"
+    "@objectlens/icons": "workspace:*",
+    "@objectlens/view-graph": "workspace:*",
+    "@objectlens/view-tree": "workspace:*"
   }
 }

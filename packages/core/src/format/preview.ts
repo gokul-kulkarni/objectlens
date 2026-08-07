@@ -4,9 +4,13 @@
  * Two jobs, deliberately separate: the inline value shown on a row, and the summary shown for a
  * collapsed container. Both are language-neutral — they read `kind`, `typeName` and `scalarType`,
  * never `source`. A view that switches on the source language has broken the abstraction.
+ *
+ * Lives in core rather than in one view because every view needs it: the tree draws it on a row,
+ * the graph draws it on a card, and two copies would drift into two different renderings of the
+ * same bignum.
  */
 
-import { childCount, type Node, type ScalarNode } from '@objectlens/core';
+import { childCount, type Node, type ScalarNode } from '../model/nodes.js';
 
 /** Longest inline string before elision. Rows are one line; a 4 KB value would destroy the layout. */
 const MAX_INLINE = 120;

@@ -54,6 +54,12 @@ export {
 } from './model/diagnostics.js';
 
 export {
+  initialExpansion,
+  toggle,
+  expandAll,
+} from './model/expansion.js';
+
+export {
   buildGraph,
   pathTo,
   ancestorsOf,
@@ -81,6 +87,9 @@ export { ViewRegistry, viewPlugins } from './view/registry.js';
 // Node sources (static vs live, made indistinguishable to views)
 export type { ChildRange, ChildWindow, NodeSource } from './source/types.js';
 export { InMemoryNodeSource } from './source/memory.js';
+
+// Formatting (shared by every view, so two views cannot render the same bignum differently)
+export { preview, formatScalar, summarise, typeLabel, elide } from './format/preview.js';
 
 // Traversal
 export { childrenOf, keyLabel, type ChildRef, type ChildRelation } from './traversal/children.js';

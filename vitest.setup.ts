@@ -68,6 +68,32 @@ if (typeof window !== 'undefined') {
     globalThis.ResizeObserver = ResizeObserverStub;
   }
 
+  // jsdom ships no CSS Typed OM, so anything that reads a `transform` back off an element throws.
+  // The flow canvas does exactly that to recover its current zoom, and only ever reads `m22`.
+  if (typeof globalThis.DOMMatrixReadOnly === 'undefined') {
+    const MATRIX_RE = /matrix\(([^)]+)\)/;
+
+    class DOMMatrixReadOnlyStub {
+      readonly m11: number = 1;
+      readonly m22: number = 1;
+      readonly m41: number = 0;
+      readonly m42: number = 0;
+
+      constructor(transform?: string) {
+        const parts = MATRIX_RE.exec(transform ?? '')?.[1]?.split(',').map(Number);
+        if (parts === undefined || parts.some(Number.isNaN)) return;
+
+        this.m11 = parts[0] ?? 1;
+        this.m22 = parts[3] ?? 1;
+        this.m41 = parts[4] ?? 0;
+        this.m42 = parts[5] ?? 0;
+      }
+    }
+
+    globalThis.DOMMatrixReadOnly =
+      DOMMatrixReadOnlyStub as unknown as typeof globalThis.DOMMatrixReadOnly;
+  }
+
   // jsdom implements no Pointer Capture API, so any component using it to track a drag would
   // throw on the first pointerdown.
   if (typeof Element.prototype.setPointerCapture !== 'function') {

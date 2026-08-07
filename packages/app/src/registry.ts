@@ -10,6 +10,7 @@ import { SourceAdapterRegistry, ViewRegistry } from '@objectlens/core';
 import { jsonAdapter } from '@objectlens/adapter-json';
 import { pythonAdapter } from '@objectlens/adapter-python';
 import { treeViewPlugin } from '@objectlens/view-tree';
+import { graphViewPlugin } from '@objectlens/view-graph';
 
 export const adapters = new SourceAdapterRegistry();
 adapters.register(jsonAdapter);
@@ -17,3 +18,4 @@ adapters.register(pythonAdapter);
 
 export const views = new ViewRegistry();
 views.register(treeViewPlugin);
+views.register(graphViewPlugin);

@@ -9,8 +9,8 @@ a log and makes it explorable.
 
 ## Status
 
-**Runnable and shippable.** Paste `repr()` output or JSON and explore it as a tree. Parsing runs
-in a Worker; the build is static with no backend.
+**Runnable and shippable.** Paste `repr()` output or JSON and explore it as a tree or as a
+node-link graph. Parsing runs in a Worker; the build is static with no backend.
 
 | Phase | | |
 | --- | --- | --- |
@@ -19,12 +19,12 @@ in a Worker; the build is static with no backend.
 | 3 | Python `repr()` adapter | ✅ done |
 | 4 | Tree view | ✅ done |
 | 6 | App shell + static site | ✅ done — first shippable milestone |
-| 5 | Graph view | ← next |
-| 7 | Zero-install export snippet | |
+| 5 | Graph view | ✅ done |
+| 7 | Zero-install export snippet | ← next |
 | 8 | Python live mode | |
 | 9 | YAML adapter + plugin guide | extensibility proof |
 
-502 tests, 86.8% line coverage. `bun run dev` and paste something.
+676 tests, 87.9% line coverage. `bun run dev` and paste something.
 
 ## Architecture
 
@@ -98,7 +98,8 @@ esbuild's postinstall fetches its platform binary — Vite and Vitest are unusab
 ```
 packages/core/            IR, registries, node sources, traversal — no React, no adapters
 packages/adapter-*/       source format → IR
-packages/view-*/          IR → rendering
+packages/view-*/          IR → rendering (tree, graph)
+packages/icons/           the SVG icon set both views draw with
 packages/app/             the Vite site; wires the registries together
 python/                   live-mode package + zero-install export snippet
 docs/schema.md            the wire contract shared by all of the above

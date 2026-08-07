@@ -11,13 +11,31 @@
 @import '@fontsource-variable/jetbrains-mono';
 
 /*
+ * Where the class names live.
+ *
+ * Automatic detection starts at this stylesheet and stops at the package boundary, and the view
+ * packages resolve through a `node_modules` symlink, which it skips by design. Without these the
+ * scan silently misses every class that only a view or the icon set uses — the selected-row ring,
+ * the type chip's size, the spinner's animation — and they vanish from the output with no error.
+ * Any new package that renders markup has to be listed here too.
+ */
+@source '../../icons/src';
+@source '../../view-tree/src';
+@source '../../view-graph/src';
+
+/*
  * Semantic tokens.
  *
  * Node colours live here rather than in the tree view because they are a property of the *IR*,
- * not of one rendering of it: when the graph view lands, a scalar has to be the same green in
- * both or the two views stop reading as one picture.
+ * not of one rendering of it: a scalar is the same green in the tree and in the graph, and the
+ * two views only read as one picture because neither owns the mapping.
+ *
+ * `static` matters: by default only variables referenced by a generated utility survive, and the
+ * graph view hands several of these to the canvas as plain `var(...)` strings for SVG strokes —
+ * which the class scanner cannot see, so they would be dropped and every edge would fall back to
+ * black.
  */
-@theme {
+@theme static {
   --font-sans:
     'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono:

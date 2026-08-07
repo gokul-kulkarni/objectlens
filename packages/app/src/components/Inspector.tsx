@@ -6,8 +6,14 @@
  */
 
 import { useState } from 'react';
-import { isAddressable, pathTo, type NodeId, type ObjectGraph } from '@objectlens/core';
-import { formatScalar, typeLabel } from '@objectlens/view-tree';
+import {
+  formatScalar,
+  isAddressable,
+  pathTo,
+  typeLabel,
+  type NodeId,
+  type ObjectGraph,
+} from '@objectlens/core';
 import { Check, ChevronSeparator, Copy } from '@objectlens/icons';
 
 export interface InspectorProps {

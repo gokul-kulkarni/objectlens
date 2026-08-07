@@ -17,6 +17,9 @@
       "path": "./packages/view-tree"
     },
     {
+      "path": "./packages/view-graph"
+    },
+    {
       "path": "./packages/app"
     }
   ]

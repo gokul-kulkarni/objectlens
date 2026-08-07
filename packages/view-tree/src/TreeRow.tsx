@@ -8,10 +8,9 @@
  * graph view will render a scalar the same green without duplicating the mapping.
  */
 
-import { isAddressable, type ChildRelation, type Node } from '@objectlens/core';
+import { elide, isAddressable, preview, typeLabel, type ChildRelation, type Node } from '@objectlens/core';
 import { Bullet, ChevronDown, ChevronRight, Cycle, Dot, NoPath, SharedRef } from '@objectlens/icons';
 import type { TreeRow as Row } from './rows.js';
-import { elide, preview, typeLabel } from './preview.js';
 
 const INDENT_PX = 14;
 
@@ -113,7 +112,10 @@ function rowClass(isSelected: boolean, isMatch: boolean): string {
   const base =
     'flex items-center gap-1.5 whitespace-nowrap py-[3px] pr-2 font-mono text-xs cursor-default transition-colors duration-150';
 
-  if (isSelected) return `${base} bg-sky-500/25 ring-1 ring-inset ring-sky-400/60`;
+  // 15%, not 25%: the type chip and container summary are `--color-ink-subtle`, which measured
+  // 4.46:1 against a 25% tint — just under AA. The inset ring is the stronger selection cue
+  // anyway, so lightening the fill costs nothing and buys 5.40:1.
+  if (isSelected) return `${base} bg-sky-500/15 ring-1 ring-inset ring-sky-400/60`;
   if (isMatch) return `${base} bg-amber-400/15 hover:bg-amber-400/25`;
   return `${base} hover:bg-slate-800/70`;
 }

@@ -1,0 +1,29 @@
+{
+  "name": "@objectlens/view-graph",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Node-link graph view plugin for ObjectLens.",
+  "license": "MIT",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "files": [
+    "src",
+    "dist"
+  ],
+  "scripts": {
+    "typecheck": "tsc --build"
+  },
+  "dependencies": {
+    "@objectlens/core": "workspace:*",
+    "@objectlens/icons": "workspace:*",
+    "@xyflow/react": "^12.11.2"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  }
+}

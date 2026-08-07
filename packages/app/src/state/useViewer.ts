@@ -8,8 +8,15 @@
  */
 
 import { useCallback, useEffect, useMemo, useReducer, useRef } from 'react';
-import { search, type Diagnostic, type NodeId, type ObjectGraph } from '@objectlens/core';
-import { expandAll, initialExpansion, toggle } from '@objectlens/view-tree';
+import {
+  expandAll,
+  initialExpansion,
+  search,
+  toggle,
+  type Diagnostic,
+  type NodeId,
+  type ObjectGraph,
+} from '@objectlens/core';
 import { adapters } from '../registry.js';
 import type { ParseRequest, ParseResponse } from '../worker/parse.worker.js';
 
