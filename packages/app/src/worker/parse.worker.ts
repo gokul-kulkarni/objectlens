@@ -13,6 +13,7 @@ import { SourceAdapterRegistry } from '@objectlens/core';
 import { jsonAdapter } from '@objectlens/adapter-json';
 import { pythonAdapter } from '@objectlens/adapter-python';
 import { snapshotAdapter } from '@objectlens/adapter-snapshot';
+import { yamlAdapter } from '@objectlens/adapter-yaml';
 
 export interface ParseRequest {
   readonly id: number;
@@ -34,6 +35,7 @@ const registry = new SourceAdapterRegistry();
 registry.register(jsonAdapter);
 registry.register(pythonAdapter);
 registry.register(snapshotAdapter);
+registry.register(yamlAdapter);
 
 self.addEventListener('message', (event: MessageEvent<ParseRequest>) => {
   const { id, adapterId, text, filename } = event.data;

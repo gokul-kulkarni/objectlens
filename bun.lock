@@ -50,6 +50,18 @@
         "@objectlens/adapter-python": "workspace:*",
       },
     },
+    "packages/adapter-yaml": {
+      "name": "@objectlens/adapter-yaml",
+      "version": "0.1.0",
+      "dependencies": {
+        "@objectlens/core": "workspace:*",
+        "yaml": "^2.9.0",
+      },
+      "devDependencies": {
+        "@objectlens/adapter-json": "workspace:*",
+        "@objectlens/adapter-python": "workspace:*",
+      },
+    },
     "packages/app": {
       "name": "@objectlens/app",
       "version": "0.1.0",
@@ -57,6 +69,7 @@
         "@objectlens/adapter-json": "workspace:*",
         "@objectlens/adapter-python": "workspace:*",
         "@objectlens/adapter-snapshot": "workspace:*",
+        "@objectlens/adapter-yaml": "workspace:*",
         "@objectlens/core": "workspace:*",
         "@objectlens/icons": "workspace:*",
         "@objectlens/view-graph": "workspace:*",
@@ -255,6 +268,8 @@
     "@objectlens/adapter-python": ["@objectlens/adapter-python@workspace:packages/adapter-python"],
 
     "@objectlens/adapter-snapshot": ["@objectlens/adapter-snapshot@workspace:packages/adapter-snapshot"],
+
+    "@objectlens/adapter-yaml": ["@objectlens/adapter-yaml@workspace:packages/adapter-yaml"],
 
     "@objectlens/app": ["@objectlens/app@workspace:packages/app"],
 
@@ -729,6 +744,8 @@
     "xmlchars": ["xmlchars@2.2.0", "", {}, "sha512-JZnDKK8B0RCDw84FNdDAIpZK+JuJw+s7Lz8nksI7SIuU3UXJJslUthsi+uWBUYOwPFwW7W7PRLRfUKpxjtjFCw=="],
 
     "yallist": ["yallist@3.1.1", "", {}, "sha512-a4UGQaWPH59mOXUYnAG2ewncQS4i4F43Tv3JoAM+s2VDAmS9NsK8GpDMLrCHPksFT7h3K6TOoUNn2pb7RoXx4g=="],
+
+    "yaml": ["yaml@2.9.0", "", { "bin": { "yaml": "bin.mjs" } }, "sha512-2AvhNX3mb8zd6Zy7INTtSpl1F15HW6Wnqj0srWlkKLcpYl/gMIMJiyuGq2KeI2YFxUPjdlB+3Lc10seMLtL4cA=="],
 
     "zustand": ["zustand@4.5.7", "", { "dependencies": { "use-sync-external-store": "^1.2.2" }, "peerDependencies": { "@types/react": ">=16.8", "immer": ">=9.0.6", "react": ">=16.8" }, "optionalPeers": ["@types/react", "immer", "react"] }, "sha512-CHOUy7mu3lbD6o6LJLfllpjkzhHXSBlX8B9+qPddUsIfeF5S/UZ5q0kmCsnRqT1UHFQZchNFDDzMbQsuesHWlw=="],
 

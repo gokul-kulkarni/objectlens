@@ -37,6 +37,9 @@
     },
     {
       "path": "../adapter-snapshot"
+    },
+    {
+      "path": "../adapter-yaml"
     }
   ]
 }

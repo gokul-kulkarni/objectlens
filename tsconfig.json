@@ -17,6 +17,9 @@
       "path": "./packages/adapter-snapshot"
     },
     {
+      "path": "./packages/adapter-yaml"
+    },
+    {
       "path": "./packages/view-tree"
     },
     {

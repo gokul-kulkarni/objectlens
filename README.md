@@ -10,8 +10,9 @@ a log and makes it explorable.
 ## Status
 
 **Runnable and shippable.** Paste `repr()` output or JSON and explore it as a tree or as a
-node-link graph, or export a *live* Python object with real cycles and shared references using the
-zero-install snippet. Parsing runs in a Worker; the build is static with no backend.
+node-link graph. Four formats — Python `repr()`, JSON, YAML, and ObjectLens snapshots — and a
+zero-install snippet that exports a *live* Python object with real cycles and shared references.
+Parsing runs in a Worker; the build is static with no backend.
 
 | Phase | | |
 | --- | --- | --- |
@@ -22,10 +23,10 @@ zero-install snippet. Parsing runs in a Worker; the build is static with no back
 | 6 | App shell + static site | ✅ done — first shippable milestone |
 | 5 | Graph view | ✅ done |
 | 7 | Zero-install export snippet | ✅ done |
+| 9 | YAML adapter + plugin guide | ✅ done — the extensibility proof held |
 | 8 | Python live mode | ← next |
-| 9 | YAML adapter + plugin guide | extensibility proof |
 
-761 TypeScript tests + 50 Python tests, 89.1% line coverage. `bun run dev` and paste something.
+847 TypeScript tests + 50 Python tests, 89.8% line coverage. `bun run dev` and paste something.
 
 ## Architecture
 
@@ -59,9 +60,17 @@ The Python `repr()` parser is the hard, interesting part, and it is deliberately
 An interface with one implementation is always wrong, so JSON — quick, and different enough from
 Python to matter (no sets, no tuples, no object identity) — validates the IR before it sets.
 
-Phase 9 is the matching falsification test: the plugin guide gets written *by following it* to
-build the YAML adapter. If that is hard, the seams are in the wrong place and we move them then,
-rather than discovering it in year two.
+Phase 9 was the matching falsification test: [`docs/plugins.md`](docs/plugins.md) was written *by
+following it* to build the YAML adapter, on the theory that a guide written from the architecture's
+intentions describes the architecture the author meant rather than the one that exists.
+
+It held. Adding YAML — a format with anchors, tags, complex keys, binary scalars and
+multi-document streams — changed four lines outside its own package and nothing at all in `core`,
+the views, or the app's components. It needed no new `kind`: `ref`, added for Python's `...`
+recursion marker, took YAML's anchors unmodified, so the graph view drew YAML's cycles on the day
+the adapter landed without knowing YAML exists. Two rough edges turned up and are now written
+down — the parse worker needs its own `register` call, and Tailwind's content scan stops at the
+app's package boundary.
 
 ## Two deployment targets, one bundle
 
@@ -125,7 +134,7 @@ esbuild's postinstall fetches its platform binary — Vite and Vitest are unusab
 
 ```
 packages/core/            IR, registries, node sources, traversal — no React, no adapters
-packages/adapter-*/       source format → IR (JSON, Python repr, ObjectLens snapshot)
+packages/adapter-*/       source format → IR (JSON, Python repr, snapshot, YAML)
 packages/view-*/          IR → rendering (tree, graph)
 packages/icons/           the SVG icon set both views draw with
 packages/app/             the Vite site; wires the registries together
@@ -133,4 +142,5 @@ python/snippets/export.py the zero-install exporter — stdlib only, meant to be
 python/tests/             its unittest suite
 python/fixtures/          corpus generators; output committed under docs/fixtures/
 docs/schema.md            the wire contract shared by all of the above
+docs/plugins.md           how to write your own adapter or view
 ```

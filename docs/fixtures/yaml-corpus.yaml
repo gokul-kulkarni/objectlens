@@ -1,0 +1,107 @@
+# Real-world YAML, as a multi-document stream.
+#
+# The unit tests cover the grammar case by case; this covers the shapes people actually paste —
+# CI workflows, container manifests, config with anchors — where the failure mode is not "the
+# parser is wrong about `.inf`" but "nobody writes YAML the way the test suite does".
+#
+# Asserted by packages/adapter-yaml/src/corpus.test.ts.
+---
+# A GitHub Actions workflow: deep nesting, `on:` (which YAML 1.1 read as a boolean), block
+# scalars, and strings that look like other types.
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install
+        run: |
+          bun install
+          bun run typecheck
+      - name: Test
+        run: bun run test
+        env:
+          CI: true
+          NODE_VERSION: "20"
+---
+# A docker-compose file, with anchors — the thing that makes YAML worth a graph view.
+x-defaults: &defaults
+  restart: unless-stopped
+  logging:
+    driver: json-file
+    options:
+      max-size: 10m
+
+services:
+  web:
+    <<: *defaults
+    image: nginx:1.27
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - api
+  api:
+    <<: *defaults
+    image: acme/api:2.3.1
+    environment:
+      DATABASE_URL: postgres://localhost/acme
+      TIMEOUT: 30
+      DEBUG: false
+---
+# A Kubernetes manifest: custom-ish keys, quantities that are strings, and a null field.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: acme-api
+  labels:
+    app.kubernetes.io/name: acme
+spec:
+  replicas: 3
+  template:
+    spec:
+      containers:
+        - name: api
+          image: acme/api:2.3.1
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: "500m"
+          livenessProbe: null
+---
+# The awkward corners, all in one document.
+scalars:
+  version: 1.2.3          # a string, not a float
+  port: 8080
+  ratio: 0.75
+  hex: 0x1f
+  big: 12345678901234567890
+  infinite: .inf
+  nothing: ~
+  empty:
+  yes_string: "yes"
+  multiline: |
+    line one
+    line two
+  folded: >
+    joined into
+    one line
+structures:
+  set: !!set
+    ? alpha
+    ? beta
+  complex_key:
+    ? [1, 2]
+    : "keyed by a sequence"
+  tagged: !Point
+    x: 1
+    y: 2
+  binary: !!binary aGVsbG8=
+cyclic: &loop
+  name: self-referential
+  next: *loop

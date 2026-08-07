@@ -2,7 +2,7 @@
  * Bundled examples.
  *
  * The empty state has to teach the input format, and a paste box with no hint teaches nothing.
- * Each example is real `repr()` / JSON output chosen to show one thing the viewer handles that a
+ * Each example is real `repr()`, JSON or YAML chosen to show one thing the viewer handles that a
  * plain text dump does not.
  */
 
@@ -61,6 +61,30 @@ export const EXAMPLES: readonly Example[] = [
   ],
   "owner": null
 }`,
+  },
+  {
+    name: 'YAML with anchors',
+    description: 'Anchors are real sharing — the same thing a live object graph has',
+    text: `x-defaults: &defaults
+  restart: unless-stopped
+  logging:
+    driver: json-file
+
+services:
+  web:
+    <<: *defaults
+    image: nginx:1.27
+    ports: ["80:80", "443:443"]
+  api:
+    <<: *defaults
+    image: acme/api:2.3.1
+    environment:
+      TIMEOUT: 30
+      DEBUG: false
+
+cluster: &node
+  name: root
+  next: *node`,
   },
   {
     name: 'Malformed input',
