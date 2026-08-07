@@ -14,6 +14,7 @@ export {
   fieldChild,
   argChild,
   keyNodeChild,
+  keyValueChild,
   setItemChild,
   isAddressable,
   disambiguate,

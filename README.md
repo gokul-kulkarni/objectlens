@@ -10,7 +10,8 @@ a log and makes it explorable.
 ## Status
 
 **Runnable and shippable.** Paste `repr()` output or JSON and explore it as a tree or as a
-node-link graph. Parsing runs in a Worker; the build is static with no backend.
+node-link graph, or export a *live* Python object with real cycles and shared references using the
+zero-install snippet. Parsing runs in a Worker; the build is static with no backend.
 
 | Phase | | |
 | --- | --- | --- |
@@ -20,11 +21,11 @@ node-link graph. Parsing runs in a Worker; the build is static with no backend.
 | 4 | Tree view | ✅ done |
 | 6 | App shell + static site | ✅ done — first shippable milestone |
 | 5 | Graph view | ✅ done |
-| 7 | Zero-install export snippet | ← next |
-| 8 | Python live mode | |
+| 7 | Zero-install export snippet | ✅ done |
+| 8 | Python live mode | ← next |
 | 9 | YAML adapter + plugin guide | extensibility proof |
 
-676 tests, 87.9% line coverage. `bun run dev` and paste something.
+761 TypeScript tests + 50 Python tests, 89.1% line coverage. `bun run dev` and paste something.
 
 ## Architecture
 
@@ -73,6 +74,27 @@ heap. So the local package ships the same bundle and serves it from `127.0.0.1`,
 its own API — which sidesteps the mixed-content and Private Network Access rules that block a
 public HTTPS page from fetching `http://localhost`.
 
+### The zero-install on-ramp
+
+`pip install` is a real barrier when you want to look at *one* object on a machine you do not
+control, so the site also offers `python/snippets/export.py` behind a copy button. Paste it into
+any REPL — standard library only, Python 3.8+ — call `lens(obj)`, and drop the file it writes back
+onto the page.
+
+It exists because `repr()` destroys object identity. Once your graph is text, `[{'a': 1}, {'a': 1}]`
+and `[shared, shared]` are indistinguishable and a cycle is a bare `...` pointing at nothing.
+Walking the live object keeps `id()`, so sharing becomes a real `ref` edge and a cycle a real
+back-edge — which is exactly what the graph view is for.
+
+Two rules it does not break: it never calls a property getter (descriptors run arbitrary code, and
+a viewer that triggers them is a debugger that changes what it is debugging — skipped properties
+are reported, not hidden), and it never trusts `__repr__` or a user container to behave.
+
+The snippet and `@objectlens/adapter-snapshot` are two implementations of `docs/schema.md` §6 in
+two languages, so neither can be verified alone. `docs/fixtures/snapshot-corpus.json` is written by
+a real interpreter and asserted by the TypeScript suite, which makes the round trip a test rather
+than a hope.
+
 ## Development
 
 Requires [Bun](https://bun.sh) (developed against 1.3).
@@ -80,10 +102,16 @@ Requires [Bun](https://bun.sh) (developed against 1.3).
 ```bash
 bun install
 bun run test          # vitest, 80% coverage gate
+bun run test:python   # the export snippet's suite — stdlib unittest, nothing to install
+bun run test:all      # both
 bun run typecheck     # tsc project references, strict
 bun run dev           # the Vite site on :5173
 bun run build         # static output in packages/app/dist
 ```
+
+The Python suite deliberately needs no `pip install`: the snippet's whole promise is that it runs
+anywhere with nothing installed, and a test suite that needed a dependency to prove that would be
+a poor witness. `pytest` collects it too, if you have it.
 
 Bun is the package manager and script runner; Vitest and Vite still run on Node under the hood, so
 nothing depends on Bun-specific runtime behaviour. Internal packages are wired with the
@@ -97,10 +125,12 @@ esbuild's postinstall fetches its platform binary — Vite and Vitest are unusab
 
 ```
 packages/core/            IR, registries, node sources, traversal — no React, no adapters
-packages/adapter-*/       source format → IR
+packages/adapter-*/       source format → IR (JSON, Python repr, ObjectLens snapshot)
 packages/view-*/          IR → rendering (tree, graph)
 packages/icons/           the SVG icon set both views draw with
 packages/app/             the Vite site; wires the registries together
-python/                   live-mode package + zero-install export snippet
+python/snippets/export.py the zero-install exporter — stdlib only, meant to be pasted
+python/tests/             its unittest suite
+python/fixtures/          corpus generators; output committed under docs/fixtures/
 docs/schema.md            the wire contract shared by all of the above
 ```

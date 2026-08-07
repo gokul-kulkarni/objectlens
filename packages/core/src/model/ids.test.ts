@@ -9,6 +9,7 @@ import {
   isIdentifier,
   keyChild,
   keyNodeChild,
+  keyValueChild,
   setItemChild,
 } from './ids.js';
 
@@ -61,6 +62,7 @@ describe('isAddressable', () => {
     ['set members', setItemChild('$.tags', 0)],
     ['dict keys', keyNodeChild(ROOT_ID, 0)],
     ['positional args', argChild('$.created', 0)],
+    ['values behind a structural key', keyValueChild(ROOT_ID, 0)],
   ])('is false for %s, which have no access expression', (_label, id) => {
     expect(isAddressable(id)).toBe(false);
   });
@@ -69,6 +71,13 @@ describe('isAddressable', () => {
     // A field reached *through* a set member is still unreachable by expression.
     const viaSet = fieldChild(setItemChild('$.tags', 0), 'name');
     expect(isAddressable(viaSet)).toBe(false);
+  });
+});
+
+describe('keyValueChild', () => {
+  it('does not collide with the key node it sits beside', () => {
+    // Both describe entry 0 of the same map. Sharing an id would silently drop one of them.
+    expect(keyValueChild(ROOT_ID, 0)).not.toBe(keyNodeChild(ROOT_ID, 0));
   });
 });
 

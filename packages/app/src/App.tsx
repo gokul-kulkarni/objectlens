@@ -151,7 +151,11 @@ export function App() {
             )}
           </div>
 
-          <DiagnosticsPanel diagnostics={state.diagnostics} onSelect={viewer.select} />
+          <DiagnosticsPanel
+            diagnostics={state.diagnostics}
+            parsed={state.graph !== null}
+            onSelect={viewer.select}
+          />
         </div>
 
         <ResizeHandle

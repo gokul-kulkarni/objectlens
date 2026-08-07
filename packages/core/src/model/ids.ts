@@ -58,6 +58,17 @@ export function keyNodeChild(parent: NodeId, index: number): NodeId {
   return `${parent}${OPAQUE_SEGMENT_MARKER}key${index}`;
 }
 
+/**
+ * `$@value0` — the *value* of a map entry whose key has no literal form, as in `{(1, 2): 'x'}`.
+ *
+ * Distinct from {@link keyChild}: there is no expression that subscripts a dict by a tuple you
+ * would have to construct, so this position is not addressable and must not claim to be. It is
+ * also distinct from the key's own `$@key0`, which would otherwise collide with it.
+ */
+export function keyValueChild(parent: NodeId, index: number): NodeId {
+  return `${parent}${OPAQUE_SEGMENT_MARKER}value${index}`;
+}
+
 /** `$@item0` — a set member. Sets are unindexed, so this is a position, not an accessor. */
 export function setItemChild(parent: NodeId, index: number): NodeId {
   return `${parent}${OPAQUE_SEGMENT_MARKER}item${index}`;

@@ -12,6 +12,7 @@ import {
   indexChild,
   keyChild,
   keyNodeChild,
+  keyValueChild,
   parseError,
   parseWarning,
   positionAt,
@@ -269,7 +270,12 @@ class PythonParser {
     }
 
     // The path uses the key's source-language literal, so `$['users']` pastes back into Python.
-    const valueId = this.#allocator.allocate(keyChild(parentId, keyLiteral(key, index)));
+    // A structural key has no such literal, and inventing one would hand the reader a "copy path"
+    // that does not evaluate — so those values get an unaddressable `@value` position instead.
+    const literal = keyLiteral(key);
+    const valueId = this.#allocator.allocate(
+      literal === null ? keyValueChild(parentId, index) : keyChild(parentId, literal),
+    );
     return { key, value: this.#parseValue(valueId, depth + 1) };
   }
 
@@ -574,13 +580,11 @@ const COMMA_SEPARATOR = '","';
 const SET_SEPARATOR = '"," or ":"';
 
 /** Renders a key node back to Python source, for use inside a path id. */
-function keyLiteral(key: Node, index: number): string {
-  if (key.kind === 'scalar') {
-    if (key.scalarType === 'string') return pythonQuote(String(key.value));
-    return key.raw ?? String(key.value);
-  }
-  // Structural keys such as `(1, 2)` have no short literal form; fall back to a positional id.
-  return `key${index}`;
+/** The key's Python literal, or `null` when it has none — `{(1, 2): 'x'}`, `{frozenset(): 'y'}`. */
+function keyLiteral(key: Node): string | null {
+  if (key.kind !== 'scalar') return null;
+  if (key.scalarType === 'string') return pythonQuote(String(key.value));
+  return key.raw ?? String(key.value);
 }
 
 function pythonQuote(value: string): string {

@@ -9,6 +9,7 @@ import { useCallback, useRef, useState } from 'react';
 import type { Detection } from '@objectlens/core';
 import { FileUp, Play, Spinner } from '@objectlens/icons';
 import { EXAMPLES } from '../examples.js';
+import { SnippetPanel } from './SnippetPanel.jsx';
 
 export interface InputPanelProps {
   readonly text: string;
@@ -137,6 +138,8 @@ export function InputPanel({
           </button>
         ))}
       </div>
+
+      <SnippetPanel />
     </section>
   );
 }

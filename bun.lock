@@ -39,12 +39,24 @@
         "@objectlens/core": "workspace:*",
       },
     },
+    "packages/adapter-snapshot": {
+      "name": "@objectlens/adapter-snapshot",
+      "version": "0.1.0",
+      "dependencies": {
+        "@objectlens/core": "workspace:*",
+      },
+      "devDependencies": {
+        "@objectlens/adapter-json": "workspace:*",
+        "@objectlens/adapter-python": "workspace:*",
+      },
+    },
     "packages/app": {
       "name": "@objectlens/app",
       "version": "0.1.0",
       "dependencies": {
         "@objectlens/adapter-json": "workspace:*",
         "@objectlens/adapter-python": "workspace:*",
+        "@objectlens/adapter-snapshot": "workspace:*",
         "@objectlens/core": "workspace:*",
         "@objectlens/icons": "workspace:*",
         "@objectlens/view-graph": "workspace:*",
@@ -241,6 +253,8 @@
     "@objectlens/adapter-json": ["@objectlens/adapter-json@workspace:packages/adapter-json"],
 
     "@objectlens/adapter-python": ["@objectlens/adapter-python@workspace:packages/adapter-python"],
+
+    "@objectlens/adapter-snapshot": ["@objectlens/adapter-snapshot@workspace:packages/adapter-snapshot"],
 
     "@objectlens/app": ["@objectlens/app@workspace:packages/app"],
 

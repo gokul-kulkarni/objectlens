@@ -12,6 +12,7 @@ import type { Diagnostic, ObjectGraph } from '@objectlens/core';
 import { SourceAdapterRegistry } from '@objectlens/core';
 import { jsonAdapter } from '@objectlens/adapter-json';
 import { pythonAdapter } from '@objectlens/adapter-python';
+import { snapshotAdapter } from '@objectlens/adapter-snapshot';
 
 export interface ParseRequest {
   readonly id: number;
@@ -32,6 +33,7 @@ export interface ParseResponse {
 const registry = new SourceAdapterRegistry();
 registry.register(jsonAdapter);
 registry.register(pythonAdapter);
+registry.register(snapshotAdapter);
 
 self.addEventListener('message', (event: MessageEvent<ParseRequest>) => {
   const { id, adapterId, text, filename } = event.data;

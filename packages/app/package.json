@@ -13,6 +13,7 @@
   "dependencies": {
     "@objectlens/adapter-json": "workspace:*",
     "@objectlens/adapter-python": "workspace:*",
+    "@objectlens/adapter-snapshot": "workspace:*",
     "@objectlens/core": "workspace:*",
     "@objectlens/icons": "workspace:*",
     "@objectlens/view-graph": "workspace:*",

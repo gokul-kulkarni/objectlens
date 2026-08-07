@@ -1,0 +1,27 @@
+{
+  "name": "@objectlens/adapter-snapshot",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "ObjectLens snapshot source adapter \u2014 loads files written by the Python package and the zero-install snippet.",
+  "license": "MIT",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "files": [
+    "src",
+    "dist"
+  ],
+  "scripts": {
+    "typecheck": "tsc --build"
+  },
+  "dependencies": {
+    "@objectlens/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@objectlens/adapter-json": "workspace:*",
+    "@objectlens/adapter-python": "workspace:*"
+  }
+}

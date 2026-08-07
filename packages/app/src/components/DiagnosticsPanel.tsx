@@ -11,10 +11,12 @@ import { ChevronDown, ChevronRight, ErrorIcon, WarningIcon } from '@objectlens/i
 
 export interface DiagnosticsPanelProps {
   readonly diagnostics: readonly Diagnostic[];
+  /** Whether a graph came out of the parse. Decides whether this strip reassures or explains. */
+  readonly parsed: boolean;
   readonly onSelect: (id: NodeId) => void;
 }
 
-export function DiagnosticsPanel({ diagnostics, onSelect }: DiagnosticsPanelProps) {
+export function DiagnosticsPanel({ diagnostics, parsed, onSelect }: DiagnosticsPanelProps) {
   const [open, setOpen] = useState(false);
 
   if (diagnostics.length === 0) return null;
@@ -41,7 +43,13 @@ export function DiagnosticsPanel({ diagnostics, onSelect }: DiagnosticsPanelProp
             {warnings} warning{warnings === 1 ? '' : 's'}
           </span>
         )}
-        <span className="text-[color:var(--color-ink-subtle)]">— the rest of the input was parsed normally</span>
+        <span className="text-[color:var(--color-ink-subtle)]">
+          {/*
+            "the rest was parsed normally" is a reassurance, and it is a false one when nothing
+            was parsed at all — a rejected snapshot version produces exactly that case.
+          */}
+          {parsed ? '— the rest of the input was parsed normally' : '— nothing could be read from this input'}
+        </span>
       </button>
 
       {open && (

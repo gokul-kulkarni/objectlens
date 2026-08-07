@@ -14,7 +14,9 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "typecheck": "tsc --build --verbose",
-    "clean": "tsc --build --clean"
+    "clean": "tsc --build --clean",
+    "test:python": "python3 -m unittest discover -s python/tests",
+    "test:all": "bun run test && bun run test:python"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",

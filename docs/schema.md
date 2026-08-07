@@ -141,6 +141,7 @@ value behind "copy path". Where a legal access expression exists, **the id *is* 
 | --- | --- | --- |
 | root | `$` | `$` |
 | map entry value | `$[<key literal>]` | `$["users"]` |
+| map entry value, structural key | `$@value<n>` | `$@value0` |
 | sequence item | `$[<index>]` | `$["users"][0]` |
 | object field | `$.<name>` | `$["users"][0].name` |
 | object positional arg | `$@arg<n>` | `$.created@arg0` |
@@ -148,7 +149,10 @@ value behind "copy path". Where a legal access expression exists, **the id *is* 
 | set item | `$@item<n>` | `$.tags@item0` |
 
 The `@` forms mark positions with no addressable expression (you cannot subscript a set), which is
-also the signal to the UI that "copy path" should be disabled rather than offering a lie.
+also the signal to the UI that "copy path" should be disabled rather than offering a lie. A map
+entry whose key has no literal form — `{(1, 2): 'x'}` — takes `$@value<n>` rather than inventing a
+literal, because there is no expression that subscripts a dict by a tuple you would have to build
+first. It is distinct from the key's own `$@key<n>`, which sits beside it.
 
 Key literals are emitted in the **source language's** syntax, so a Python path pastes into Python
 and a JSON path reads naturally. Duplicate ids are impossible for dict/set semantics, but a
