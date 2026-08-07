@@ -1,0 +1,68 @@
+# Build and publish the static site to GitHub Pages.
+#
+# The deploy is gated on the full test suite on purpose. This publishes to a public URL, and a
+# broken build reaching it is worse than a deploy that does not happen — nobody is watching the
+# site the way they watch a failing check.
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  # So a deploy can be re-run without an empty commit.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time, and never cancel one in flight: a half-published site is worse than a
+# slightly stale one.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.3.5'
+
+      # `--frozen-lockfile` so CI fails loudly on a lockfile that drifted from package.json,
+      # rather than quietly resolving something nobody has run locally.
+      - name: Install
+        run: bun install --frozen-lockfile
+
+      - name: Typecheck
+        run: bun run typecheck
+
+      - name: Test
+        run: bun run test
+
+      # The export snippet's suite. Deliberately stdlib-only, so there is nothing to install —
+      # which is the same promise the snippet itself makes to whoever pastes it.
+      - name: Test the export snippet
+        run: python3 -m unittest discover -s python/tests
+
+      - name: Build
+        run: bun run build
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: packages/app/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

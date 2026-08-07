@@ -4,7 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ObjectLens — explore Python objects, JSON and more</title>
-    <meta name="description" content="Paste repr() output or JSON and explore it as a tree or graph." />
+    <meta name="description" content="Paste Python repr() output, JSON or YAML and explore it as a tree or a node-link graph. No upload, no backend." />
+    <!--
+      Inline so there is no second request and no 404 on a fresh deploy. A public page that asks
+      for a favicon it does not ship logs an error on every single load.
+    -->
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230f172a'/%3E%3Ccircle cx='14' cy='14' r='7' fill='none' stroke='%2338bdf8' stroke-width='2.5'/%3E%3Cpath d='M19.5 19.5 L26 26' stroke='%2338bdf8' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E"
+    />
+    <meta name="color-scheme" content="dark" />
   </head>
   <body class="h-full">
     <div id="root" class="h-full"></div>

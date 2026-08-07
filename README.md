@@ -3,6 +3,11 @@
 Explore structured objects — Python `repr()` output, JSON, YAML, anything with an adapter — as a
 navigable tree and a node-link graph.
 
+**→ [gokul-kulkarni.github.io/objectlens](https://gokul-kulkarni.github.io/objectlens/)**
+
+Nothing is uploaded. Parsing happens in a Web Worker in your own tab, and the deployment is a
+folder of static files with no backend to send anything to.
+
 `print(obj)` gives you an unreadable wall of text, `pprint` gives you a slightly better wall, and a
 real debugger needs an IDE and a live process. ObjectLens takes the text you already copied out of
 a log and makes it explorable.
@@ -103,6 +108,22 @@ The snippet and `@objectlens/adapter-snapshot` are two implementations of `docs/
 two languages, so neither can be verified alone. `docs/fixtures/snapshot-corpus.json` is written by
 a real interpreter and asserted by the TypeScript suite, which makes the round trip a test rather
 than a hope.
+
+## Deploying
+
+The site is static, so hosting it needs no server of any kind — `bun run build` produces
+`packages/app/dist` and any file host will do.
+
+[`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) publishes it to GitHub Pages on
+every push to `main`, gated on typecheck and both test suites: this goes to a public URL, and a
+broken build reaching it is worse than a deploy that does not happen.
+
+Enabling it on a fresh clone is one setting — **Settings → Pages → Source: GitHub Actions**. The
+workflow fails with a permissions error until that is done, which is the only manual step.
+
+`base` is `'./'` rather than an absolute path, so the same build works at a domain root, under a
+`/repo/` subpath, and from `file://`. That matters beyond convenience: the local Python package
+serves this identical bundle from `127.0.0.1`, and a build hardcoded to one origin could not.
 
 ## Development
 

@@ -3,7 +3,7 @@
     >>> lens(my_object)                 # writes objectlens-snapshot.json
     >>> print(lens_json(my_object))     # or get the JSON as a string
 
-Then open the file at https://objectlens.dev (or your own build) to explore it.
+Then open the file at https://gokul-kulkarni.github.io/objectlens/ (or your own build).
 
 Why this exists
 ---------------
@@ -42,7 +42,11 @@ import sys
 
 __all__ = ["lens", "lens_json", "to_snapshot"]
 
+# Identifies the *format version*, not a location: nothing fetches this, and it must stay stable
+# across deployments or every snapshot ever written stops being recognised. `VIEWER_URL` is the
+# address that actually has to resolve, which is why the two are separate strings.
 SCHEMA_URL = "https://objectlens.dev/schema/v1"
+VIEWER_URL = "https://gokul-kulkarni.github.io/objectlens/"
 SCHEMA_VERSION = 1
 GENERATOR = "objectlens-snippet/0.1.0"
 SOURCE_ID = "python-live"
@@ -496,8 +500,8 @@ def lens_json(obj, indent=None, **limits):
 
 
 def lens(obj, path=DEFAULT_PATH, **limits):
-    """Writes the snapshot beside you and returns the path. Open it at https://objectlens.dev."""
+    """Writes the snapshot beside you and returns the path, then says where to open it."""
     with open(path, "w", encoding="utf-8") as handle:
         handle.write(lens_json(obj, indent=2, **limits))
-    print("ObjectLens snapshot written to %s — open it at https://objectlens.dev" % path)
+    print("ObjectLens snapshot written to %s — open it at %s" % (path, VIEWER_URL))
     return path
