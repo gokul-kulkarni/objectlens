@@ -10,13 +10,15 @@ import type { MouseEvent } from 'react';
 import 'highlight.js/styles/github-dark.css';
 import { MermaidDiagram } from './MermaidDiagram.jsx';
 import type { Segment } from './render.js';
+import { PREVIEW_WIDTH_CLASS, type PreviewWidth } from './usePreviewWidth.js';
 
 export interface MarkdownPreviewProps {
   readonly segments: readonly Segment[];
   readonly onNavigate: (id: string) => void;
+  readonly width?: PreviewWidth;
 }
 
-export function MarkdownPreview({ segments, onNavigate }: MarkdownPreviewProps) {
+export function MarkdownPreview({ segments, onNavigate, width = 'wide' }: MarkdownPreviewProps) {
   const onClick = (event: MouseEvent<HTMLElement>) => {
     const link = (event.target as Element).closest('a');
     const href = link?.getAttribute('href');
@@ -26,7 +28,7 @@ export function MarkdownPreview({ segments, onNavigate }: MarkdownPreviewProps) 
   };
 
   return (
-    <article className="ol-markdown mx-auto max-w-3xl px-6 py-6" onClick={onClick}>
+    <article className={`ol-markdown mx-auto px-6 py-6 lg:px-10 ${PREVIEW_WIDTH_CLASS[width]}`} onClick={onClick}>
       {segments.map((segment, index) =>
         segment.kind === 'mermaid' ? (
           <MermaidDiagram key={`mermaid-${index}`} source={segment.source} />

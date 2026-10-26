@@ -8,15 +8,18 @@
 import { useCallback, useRef, type CSSProperties } from 'react';
 import { LinkIcon, Spinner } from '@objectlens/icons';
 import { ResizeHandle } from '../components/ResizeHandle.jsx';
+import { SegmentedControl } from '../components/SegmentedControl.jsx';
 import { SourceEditor } from '../components/SourceEditor.jsx';
 import { MARKDOWN_EXAMPLES } from '../examples.js';
 import { MarkdownPreview } from '../markdown/MarkdownPreview.jsx';
 import { useMarkdown } from '../markdown/useMarkdown.js';
+import { PREVIEW_WIDTHS, usePreviewWidth } from '../markdown/usePreviewWidth.js';
 import type { Heading } from '../markdown/render.js';
 import { PANEL_LIMITS, type PanelControls } from '../state/usePanelSizes.js';
 
 export function MarkdownMode({ panels }: { readonly panels: PanelControls }) {
   const markdown = useMarkdown();
+  const { width, setWidth } = usePreviewWidth();
   const { sizes, setPanel, adjustPanel, resetPanel } = panels;
   const previewRef = useRef<HTMLDivElement>(null);
   const { segments, headings } = markdown.rendered;
@@ -113,18 +116,28 @@ export function MarkdownMode({ panels }: { readonly panels: PanelControls }) {
         onReset={() => resetPanel('left')}
       />
 
-      <div ref={previewRef} className="min-h-0 min-w-0 flex-1 overflow-auto" data-testid="markdown-scroll">
-        {markdown.text.trim() === '' ? (
-          <div className="max-w-md p-6 text-sm leading-relaxed text-[color:var(--color-ink-subtle)]">
-            <p className="mb-3">Paste Markdown on the left, open a file, or load a README from GitHub.</p>
-            <p className="text-xs">
-              Tables, task lists and highlighted code render as they do on GitHub, and{' '}
-              <code className="font-mono">```mermaid</code> blocks are drawn as diagrams.
-            </p>
-          </div>
-        ) : (
-          <MarkdownPreview segments={segments} onNavigate={navigate} />
-        )}
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+        <div className="flex shrink-0 items-center gap-2 border-b border-slate-800 px-3 py-1.5">
+          <span className="min-w-0 flex-1 truncate text-xs text-[color:var(--color-ink-subtle)]">
+            {markdown.label ?? 'Preview'}
+          </span>
+          <span className="text-[11px] text-[color:var(--color-ink-subtle)]">Width</span>
+          <SegmentedControl label="Preview width" options={PREVIEW_WIDTHS} value={width} onChange={setWidth} />
+        </div>
+
+        <div ref={previewRef} className="min-h-0 min-w-0 flex-1 overflow-auto" data-testid="markdown-scroll">
+          {markdown.text.trim() === '' ? (
+            <div className="max-w-md p-6 text-sm leading-relaxed text-[color:var(--color-ink-subtle)]">
+              <p className="mb-3">Paste Markdown on the left, open a file, or load a README from GitHub.</p>
+              <p className="text-xs">
+                Tables, task lists and highlighted code render as they do on GitHub, and{' '}
+                <code className="font-mono">```mermaid</code> blocks are drawn as diagrams.
+              </p>
+            </div>
+          ) : (
+            <MarkdownPreview segments={segments} onNavigate={navigate} width={width} />
+          )}
+        </div>
       </div>
 
       <ResizeHandle
