@@ -48,7 +48,7 @@ export function InputPanel({
         actions={
           <button
             type="button"
-            className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded bg-sky-700 px-3 py-1 text-xs font-medium text-white transition-colors duration-150 hover:bg-sky-800 disabled:cursor-not-allowed disabled:opacity-40"
+            className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded bg-brand px-3 py-1 text-xs font-medium text-brand-ink transition-colors duration-150 hover:bg-brand-strong disabled:cursor-not-allowed disabled:opacity-40"
             disabled={text.trim() === '' || status === 'parsing'}
             onClick={onParse}
           >
@@ -65,7 +65,7 @@ export function InputPanel({
             key={example.name}
             type="button"
             title={example.description}
-            className="cursor-pointer rounded border border-slate-800 px-2 py-1 text-[11px] text-[color:var(--color-ink-subtle)] transition-colors duration-150 hover:border-slate-600 hover:text-[color:var(--color-ink)]"
+            className="cursor-pointer rounded border border-line px-2 py-1 text-[11px] text-[color:var(--color-ink-subtle)] transition-colors duration-150 hover:border-line-hover hover:text-[color:var(--color-ink)]"
             onClick={() => onChangeText(example.text)}
           >
             {example.name}

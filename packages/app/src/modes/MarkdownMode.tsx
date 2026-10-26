@@ -32,7 +32,7 @@ export function MarkdownMode({ panels }: { readonly panels: PanelControls }) {
   return (
     <main className="flex min-h-0 flex-1 flex-col lg:flex-row">
       <div
-        className="min-h-0 shrink-0 border-b border-slate-800 lg:w-[var(--left-panel)] lg:border-b-0"
+        className="min-h-0 shrink-0 border-b border-line lg:w-[var(--left-panel)] lg:border-b-0"
         style={{ '--left-panel': `${sizes.left}px` } as CSSProperties}
       >
         <section className="flex h-full flex-col gap-2 p-3">
@@ -54,14 +54,14 @@ export function MarkdownMode({ panels }: { readonly panels: PanelControls }) {
                 autoComplete="off"
                 aria-label="Markdown URL"
                 placeholder="github.com/owner/repo, or a link to a .md file"
-                className="w-full rounded border border-slate-800 bg-slate-950 py-1 pl-7 pr-2 text-xs outline-none transition-colors duration-150 focus:border-sky-700"
+                className="w-full rounded border border-line bg-surface-sunken py-1 pl-7 pr-2 text-xs outline-none transition-colors duration-150 focus:border-brand"
                 value={markdown.url}
                 onChange={(event) => markdown.setUrl(event.target.value)}
               />
             </div>
             <button
               type="submit"
-              className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded bg-sky-700 px-3 py-1 text-xs font-medium text-white transition-colors duration-150 hover:bg-sky-800 disabled:cursor-not-allowed disabled:opacity-40"
+              className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded bg-brand px-3 py-1 text-xs font-medium text-brand-ink transition-colors duration-150 hover:bg-brand-strong disabled:cursor-not-allowed disabled:opacity-40"
               disabled={markdown.url.trim() === '' || markdown.status.state === 'loading'}
             >
               {markdown.status.state === 'loading' && <Spinner />}
@@ -95,7 +95,7 @@ export function MarkdownMode({ panels }: { readonly panels: PanelControls }) {
                 key={example.name}
                 type="button"
                 title={example.description}
-                className="cursor-pointer rounded border border-slate-800 px-2 py-1 text-[11px] text-[color:var(--color-ink-subtle)] transition-colors duration-150 hover:border-slate-600 hover:text-[color:var(--color-ink)]"
+                className="cursor-pointer rounded border border-line px-2 py-1 text-[11px] text-[color:var(--color-ink-subtle)] transition-colors duration-150 hover:border-line-hover hover:text-[color:var(--color-ink)]"
                 onClick={() => markdown.loadText(example.text, example.name)}
               >
                 {example.name}
@@ -117,7 +117,7 @@ export function MarkdownMode({ panels }: { readonly panels: PanelControls }) {
       />
 
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-        <div className="flex shrink-0 items-center gap-2 border-b border-slate-800 px-3 py-1.5">
+        <div className="flex shrink-0 items-center gap-2 border-b border-line px-3 py-1.5">
           <span className="min-w-0 flex-1 truncate text-xs text-[color:var(--color-ink-subtle)]">
             {markdown.label ?? 'Preview'}
           </span>
@@ -152,7 +152,7 @@ export function MarkdownMode({ panels }: { readonly panels: PanelControls }) {
       />
 
       <div
-        className="min-h-0 shrink-0 overflow-auto border-t border-slate-800 lg:w-[var(--right-panel)] lg:border-t-0"
+        className="min-h-0 shrink-0 overflow-auto border-t border-line lg:w-[var(--right-panel)] lg:border-t-0"
         style={{ '--right-panel': `${sizes.right}px` } as CSSProperties}
       >
         <Outline headings={headings} onNavigate={navigate} />
@@ -178,7 +178,7 @@ function Outline({ headings, onNavigate }: { readonly headings: readonly Heading
           <li key={heading.id} style={{ paddingLeft: (heading.depth - top) * 12 }}>
             <button
               type="button"
-              className="w-full cursor-pointer truncate rounded px-1 py-0.5 text-left text-[color:var(--color-ink-muted)] transition-colors duration-150 hover:bg-slate-800 hover:text-[color:var(--color-ink)]"
+              className="w-full cursor-pointer truncate rounded px-1 py-0.5 text-left text-[color:var(--color-ink-muted)] transition-colors duration-150 hover:bg-surface-raised hover:text-[color:var(--color-ink)]"
               title={heading.text}
               onClick={() => onNavigate(heading.id)}
             >

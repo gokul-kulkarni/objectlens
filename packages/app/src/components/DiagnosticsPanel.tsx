@@ -27,10 +27,10 @@ export function DiagnosticsPanel({ diagnostics, parsed, onSelect, source }: Diag
   const warnings = diagnostics.length - errors;
 
   return (
-    <div className="border-t border-slate-800 bg-slate-900/60 text-xs">
+    <div className="border-t border-line bg-surface/60 text-xs">
       <button
         type="button"
-        className="flex w-full cursor-pointer items-center gap-2 px-3 py-1.5 text-left transition-colors duration-150 hover:bg-slate-800/60"
+        className="flex w-full cursor-pointer items-center gap-2 px-3 py-1.5 text-left transition-colors duration-150 hover:bg-surface-raised/60"
         onClick={() => setOpen((value) => !value)}
         aria-expanded={open}
       >
@@ -56,11 +56,11 @@ export function DiagnosticsPanel({ diagnostics, parsed, onSelect, source }: Diag
       </button>
 
       {open && (
-        <ul className="max-h-40 overflow-auto border-t border-slate-800">
+        <ul className="max-h-40 overflow-auto border-t border-line">
           {diagnostics.map((diagnostic, index) => (
             <li
               key={`${diagnostic.message}-${index}`}
-              className="flex items-start gap-2 border-b border-slate-800/60 px-3 py-1 last:border-0"
+              className="flex items-start gap-2 border-b border-line/60 px-3 py-1 last:border-0"
             >
               {diagnostic.severity === 'error' ? (
                 <ErrorIcon

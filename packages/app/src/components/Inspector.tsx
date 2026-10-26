@@ -67,7 +67,7 @@ export function Inspector({ graph, selection, onSelect }: InspectorProps) {
               )}
               <button
                 type="button"
-                className="cursor-pointer rounded px-1 font-mono text-[11px] text-[color:var(--color-label-key)] transition-colors duration-150 hover:bg-slate-800"
+                className="cursor-pointer rounded px-1 font-mono text-[11px] text-[color:var(--color-label-key)] transition-colors duration-150 hover:bg-surface-raised"
                 onClick={() => onSelect(id)}
               >
                 {index === 0 ? '$' : (graph.labelById.get(id) ?? '?')}
@@ -82,7 +82,7 @@ export function Inspector({ graph, selection, onSelect }: InspectorProps) {
           Path
         </h2>
         <div className="flex items-start gap-2">
-          <code className="min-w-0 flex-1 break-all rounded bg-slate-950 p-1.5 text-[11px] text-[color:var(--color-ink-muted)]">
+          <code className="min-w-0 flex-1 break-all rounded bg-surface-sunken p-1.5 text-[11px] text-[color:var(--color-ink-muted)]">
             {node.id}
           </code>
           <button
@@ -94,7 +94,7 @@ export function Inspector({ graph, selection, onSelect }: InspectorProps) {
                 ? 'Copy path'
                 : 'This position has no access expression — it is inside a set, a dict key, or a positional argument'
             }
-            className="flex shrink-0 cursor-pointer items-center gap-1 rounded border border-slate-700 px-1.5 py-1 text-[11px] text-[color:var(--color-ink-muted)] transition-colors duration-150 hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-30"
+            className="flex shrink-0 cursor-pointer items-center gap-1 rounded border border-line-strong px-1.5 py-1 text-[11px] text-[color:var(--color-ink-muted)] transition-colors duration-150 hover:bg-surface-raised disabled:cursor-not-allowed disabled:opacity-30"
             onClick={() => copy('path', node.id)}
           >
             {copied === 'path' ? <Check className="text-[color:var(--color-node-scalar)]" /> : <Copy />}
@@ -134,14 +134,14 @@ export function Inspector({ graph, selection, onSelect }: InspectorProps) {
             <button
               type="button"
               aria-label="Copy value"
-              className="flex cursor-pointer items-center gap-1 rounded border border-slate-700 px-1.5 py-0.5 text-[10px] normal-case text-[color:var(--color-ink-muted)] transition-colors duration-150 hover:bg-slate-800"
+              className="flex cursor-pointer items-center gap-1 rounded border border-line-strong px-1.5 py-0.5 text-[10px] normal-case text-[color:var(--color-ink-muted)] transition-colors duration-150 hover:bg-surface-raised"
               onClick={() => copy('value', fullValue)}
             >
               {copied === 'value' ? <Check className="text-[color:var(--color-node-scalar)]" /> : <Copy />}
               {copied === 'value' ? 'Copied' : 'Copy'}
             </button>
           </h2>
-          <pre className="max-h-64 overflow-auto whitespace-pre-wrap break-all rounded bg-slate-950 p-1.5 text-[11px] text-emerald-300">
+          <pre className="max-h-64 overflow-auto whitespace-pre-wrap break-all rounded bg-surface-sunken p-1.5 text-[11px] text-emerald-300">
             {fullValue}
           </pre>
         </div>

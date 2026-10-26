@@ -28,17 +28,25 @@ export function App() {
   if (!visited.has(mode)) setVisited(new Set([...visited, mode]));
 
   return (
-    <div className="flex h-full flex-col bg-slate-900 text-[color:var(--color-ink)]">
-      <header className="flex shrink-0 items-center gap-3 border-b border-slate-800 px-4 py-2">
-        <h1 className="text-sm font-semibold tracking-tight">
-          Object<span className="text-[color:var(--color-brand)]">Lens</span>
+    <div className="flex h-full flex-col bg-surface text-[color:var(--color-ink)]">
+      <header className="flex shrink-0 items-center gap-3 border-b border-line px-4 py-2">
+        <h1 className="flex items-center gap-2 font-[family-name:var(--font-display)] text-[15px] font-bold tracking-tight">
+          <AppMark />
+          ObjectLens
         </h1>
-        <p className="hidden text-xs text-[color:var(--color-ink-subtle)] sm:block">
+        <p className="hidden text-xs text-[color:var(--color-ink-subtle)] md:block">
           Explore, compare and read structured data — in your browser
         </p>
 
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center gap-3">
           <SegmentedControl label="Mode" options={MODES} value={mode} onChange={setMode} />
+          {/* The family link: every app points back to the profile that lists them all. */}
+          <a
+            href="https://gokulkulkarni.dev"
+            className="hidden text-xs text-[color:var(--color-ink-subtle)] transition-colors duration-150 hover:text-[color:var(--color-ink)] lg:block"
+          >
+            by Gokul
+          </a>
         </div>
       </header>
 
@@ -54,6 +62,20 @@ export function App() {
         </Suspense>
       </ModeFrame>
     </div>
+  );
+}
+
+/**
+ * The app icon: the brand's coral rounded square, carrying ObjectLens's lens glyph in white —
+ * built the same way as the `>_` mark on gokulkulkarni.dev, so the apps read as one family.
+ */
+function AppMark() {
+  return (
+    <svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true" focusable="false">
+      <rect width="32" height="32" rx="7.5" fill="var(--color-brand)" />
+      <circle cx="14" cy="14" r="6.5" fill="none" stroke="#fff" strokeWidth="2.6" />
+      <path d="M19 19 L24.5 24.5" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" />
+    </svg>
   );
 }
 

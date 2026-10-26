@@ -12,7 +12,7 @@ import { DiagramCanvas } from './DiagramCanvas.jsx';
 import { renderDiagram, type DiagramResult } from './mermaid.js';
 
 const TOOL_BUTTON =
-  'flex cursor-pointer items-center gap-1 rounded border border-slate-700 px-1.5 py-0.5 text-[11px] text-[color:var(--color-ink-muted)] transition-colors duration-150 hover:bg-slate-800';
+  'flex cursor-pointer items-center gap-1 rounded border border-line-strong px-1.5 py-0.5 text-[11px] text-[color:var(--color-ink-muted)] transition-colors duration-150 hover:bg-surface-raised';
 
 export function MermaidDiagram({ source }: { readonly source: string }) {
   const [result, setResult] = useState<DiagramResult | null>(null);
@@ -65,7 +65,7 @@ export function MermaidDiagram({ source }: { readonly source: string }) {
   };
 
   const toolbar = (zoomControls: ReactNode) => (
-    <div className="flex flex-wrap items-center gap-1.5 border-b border-slate-800 px-2 py-1">
+    <div className="flex flex-wrap items-center gap-1.5 border-b border-line px-2 py-1">
       <span className="text-[10px] font-semibold uppercase tracking-wide text-[color:var(--color-ink-subtle)]">
         Mermaid
       </span>
@@ -92,7 +92,7 @@ export function MermaidDiagram({ source }: { readonly source: string }) {
   return (
     <figure
       ref={figure}
-      className={`ol-diagram my-4 rounded border border-slate-800 ${fullscreen ? 'flex flex-col bg-slate-950' : 'bg-slate-950/60'}`}
+      className={`ol-diagram my-4 rounded border border-line ${fullscreen ? 'flex flex-col bg-surface-sunken' : 'bg-surface-sunken/60'}`}
     >
       {(svg === null || showSource) && toolbar(null)}
 

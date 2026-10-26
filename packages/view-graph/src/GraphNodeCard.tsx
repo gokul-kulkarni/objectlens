@@ -60,7 +60,7 @@ export function GraphNodeCard({ data, selected }: NodeProps<LensFlowNode>) {
           disabled={!hasChildren}
           className={`-m-1 shrink-0 rounded p-1 transition-colors duration-150 ${
             hasChildren
-              ? 'cursor-pointer text-[color:var(--color-ink-subtle)] hover:bg-slate-700/60 hover:text-[color:var(--color-ink)]'
+              ? 'cursor-pointer text-[color:var(--color-ink-subtle)] hover:bg-surface-hover/60 hover:text-[color:var(--color-ink)]'
               : 'invisible'
           }`}
           onClick={(event) => {
@@ -97,7 +97,7 @@ export function GraphNodeCard({ data, selected }: NodeProps<LensFlowNode>) {
           {elide(preview(node), MAX_PREVIEW)}
         </span>
         {hiddenChildCount > 0 && !isExpanded && (
-          <span className="tabular ml-auto shrink-0 rounded-full bg-slate-700/70 px-1.5 text-[9px] text-[color:var(--color-ink-muted)]">
+          <span className="tabular ml-auto shrink-0 rounded-full bg-surface-hover/70 px-1.5 text-[9px] text-[color:var(--color-ink-muted)]">
             {hiddenChildCount}
           </span>
         )}
@@ -108,9 +108,9 @@ export function GraphNodeCard({ data, selected }: NodeProps<LensFlowNode>) {
 
 function cardClass(selected: boolean, isMatch: boolean): string {
   const base =
-    'h-full w-full overflow-hidden rounded-md border border-l-4 bg-slate-900/95 px-2 py-1.5 shadow-sm transition-colors duration-150';
+    'h-full w-full overflow-hidden rounded-md border border-l-4 bg-surface/95 px-2 py-1.5 shadow-sm transition-colors duration-150';
 
-  if (selected) return `${base} border-sky-400 ring-2 ring-sky-400/60`;
+  if (selected) return `${base} border-brand ring-2 ring-brand/60`;
   if (isMatch) return `${base} border-amber-400/70 bg-amber-400/10`;
-  return `${base} border-slate-700 hover:border-slate-500`;
+  return `${base} border-line-strong hover:border-line-hover`;
 }

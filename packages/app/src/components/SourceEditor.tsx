@@ -61,7 +61,7 @@ export function SourceEditor({
   return (
     <div
       className={`flex min-h-0 flex-1 flex-col gap-2 rounded transition-colors duration-150 ${
-        isDragging ? 'bg-sky-500/10' : ''
+        isDragging ? 'bg-brand/10' : ''
       }`}
       onDragOver={(event) => {
         event.preventDefault();
@@ -87,7 +87,7 @@ export function SourceEditor({
             </label>
             <select
               id={formatId}
-              className="min-w-0 flex-1 cursor-pointer truncate rounded border border-slate-700 bg-slate-800 px-2 py-1 text-xs text-[color:var(--color-ink)] transition-colors duration-150 hover:border-slate-600"
+              className="min-w-0 flex-1 cursor-pointer truncate rounded border border-line-strong bg-surface-raised px-2 py-1 text-xs text-[color:var(--color-ink)] transition-colors duration-150 hover:border-line-hover"
               value={adapterId ?? 'auto'}
               onChange={(event) =>
                 onChangeAdapter(event.target.value === 'auto' ? null : event.target.value)
@@ -108,7 +108,7 @@ export function SourceEditor({
         <button
           type="button"
           title="Open a file"
-          className={`flex shrink-0 cursor-pointer items-center gap-1.5 rounded border border-slate-700 px-2 py-1 text-xs text-[color:var(--color-ink-muted)] transition-colors duration-150 hover:bg-slate-800 ${
+          className={`flex shrink-0 cursor-pointer items-center gap-1.5 rounded border border-line-strong px-2 py-1 text-xs text-[color:var(--color-ink-muted)] transition-colors duration-150 hover:bg-surface-raised ${
             detections === undefined ? 'ml-auto' : ''
           }`}
           onClick={() => fileInput.current?.click()}
@@ -135,7 +135,7 @@ export function SourceEditor({
         aria-label={label}
         spellCheck={false}
         placeholder={placeholder}
-        className="min-h-0 flex-1 resize-none rounded border border-slate-800 bg-slate-950 p-2 font-mono text-xs text-[color:var(--color-ink)] outline-none focus:border-sky-700"
+        className="min-h-0 flex-1 resize-none rounded border border-line bg-surface-sunken p-2 font-mono text-xs text-[color:var(--color-ink)] outline-none focus:border-brand"
         value={text}
         onChange={(event) => onChangeText(event.target.value)}
         onKeyDown={(event) => {

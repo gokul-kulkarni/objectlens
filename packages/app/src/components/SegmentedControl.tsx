@@ -26,7 +26,7 @@ export function SegmentedControl<T extends string>({
   onChange,
 }: SegmentedControlProps<T>) {
   return (
-    <div role="group" aria-label={label} className="flex shrink-0 overflow-hidden rounded border border-slate-700 text-xs">
+    <div role="group" aria-label={label} className="flex shrink-0 overflow-hidden rounded border border-line-strong text-xs">
       {options.map((option) => (
         <button
           key={option.id}
@@ -35,8 +35,8 @@ export function SegmentedControl<T extends string>({
           aria-pressed={option.id === value}
           className={`cursor-pointer px-2 py-0.5 transition-colors duration-150 ${
             option.id === value
-              ? 'bg-sky-700 text-white'
-              : 'text-[color:var(--color-ink-muted)] hover:bg-slate-800'
+              ? 'bg-brand text-brand-ink'
+              : 'text-[color:var(--color-ink-muted)] hover:bg-surface-raised'
           }`}
           onClick={() => onChange(option.id)}
         >

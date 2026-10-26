@@ -151,7 +151,7 @@ export function ResizeHandle({
       aria-valuemax={max}
       tabIndex={0}
       title={`${label} — drag, or use arrow keys. Double-click to reset.`}
-      className="group relative hidden w-1.5 shrink-0 cursor-col-resize touch-none bg-slate-800 transition-colors hover:bg-sky-600 focus:outline-none focus-visible:bg-sky-500 lg:block"
+      className="group relative hidden w-1.5 shrink-0 cursor-col-resize touch-none bg-surface-raised transition-colors hover:bg-brand-strong focus:outline-none focus-visible:bg-brand lg:block"
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={endDrag}

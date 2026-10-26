@@ -38,7 +38,7 @@ export function CompareInputs(props: CompareInputsProps) {
         <button
           type="button"
           title="Swap the two sides"
-          className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded border border-slate-700 px-2 py-1 text-xs text-[color:var(--color-ink-muted)] transition-colors duration-150 hover:bg-slate-800"
+          className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded border border-line-strong px-2 py-1 text-xs text-[color:var(--color-ink-muted)] transition-colors duration-150 hover:bg-surface-raised"
           onClick={onSwap}
         >
           <Swap />
@@ -54,7 +54,7 @@ export function CompareInputs(props: CompareInputsProps) {
           spellCheck={false}
           placeholder="position (or a key, e.g. id)"
           title="Match array records by this field, so reordered records line up"
-          className="min-w-0 flex-1 rounded border border-slate-800 bg-slate-950 px-2 py-1 font-mono text-xs outline-none transition-colors duration-150 focus:border-sky-700"
+          className="min-w-0 flex-1 rounded border border-line bg-surface-sunken px-2 py-1 font-mono text-xs outline-none transition-colors duration-150 focus:border-brand"
           value={arrayKey}
           onChange={(event) => onChangeArrayKey(event.target.value)}
           onKeyDown={(event) => {
@@ -64,7 +64,7 @@ export function CompareInputs(props: CompareInputsProps) {
 
         <button
           type="button"
-          className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded bg-sky-700 px-3 py-1 text-xs font-medium text-white transition-colors duration-150 hover:bg-sky-800 disabled:cursor-not-allowed disabled:opacity-40"
+          className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded bg-brand px-3 py-1 text-xs font-medium text-brand-ink transition-colors duration-150 hover:bg-brand-strong disabled:cursor-not-allowed disabled:opacity-40"
           disabled={!canCompare || comparing}
           onClick={onCompare}
         >
@@ -82,7 +82,7 @@ export function CompareInputs(props: CompareInputsProps) {
             key={example.name}
             type="button"
             title={example.description}
-            className="cursor-pointer rounded border border-slate-800 px-2 py-1 text-[11px] text-[color:var(--color-ink-subtle)] transition-colors duration-150 hover:border-slate-600 hover:text-[color:var(--color-ink)]"
+            className="cursor-pointer rounded border border-line px-2 py-1 text-[11px] text-[color:var(--color-ink-subtle)] transition-colors duration-150 hover:border-line-hover hover:text-[color:var(--color-ink)]"
             onClick={() => onLoad(example.left, example.right, example.arrayKey)}
           >
             {example.name}

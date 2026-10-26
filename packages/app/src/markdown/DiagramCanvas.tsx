@@ -11,7 +11,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState, type Pointer
 import { fitScale, formatZoom, stepZoom, clampZoom } from './zoom.js';
 
 const CONTROL =
-  'cursor-pointer rounded px-1.5 py-0.5 text-[11px] text-[color:var(--color-ink-muted)] transition-colors duration-150 hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-40';
+  'cursor-pointer rounded px-1.5 py-0.5 text-[11px] text-[color:var(--color-ink-muted)] transition-colors duration-150 hover:bg-surface-hover disabled:cursor-not-allowed disabled:opacity-40';
 
 /** Wheel delta that counts as one zoom step; trackpads send many small deltas. */
 const WHEEL_STEP = 50;
@@ -157,7 +157,7 @@ export function DiagramCanvas({ svg, fullscreen = false, toolbar }: DiagramCanva
   };
 
   const controls = (
-    <div role="group" aria-label="Zoom" className="flex items-center gap-0.5 rounded border border-slate-700 p-0.5">
+    <div role="group" aria-label="Zoom" className="flex items-center gap-0.5 rounded border border-line-strong p-0.5">
       <button type="button" className={CONTROL} aria-label="Zoom out" title="Zoom out (−)" onClick={() => step(-1)}>
         −
       </button>

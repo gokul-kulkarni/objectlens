@@ -39,7 +39,7 @@ export function DiffDetail({ node }: { readonly node: DiffNode | undefined }) {
       <div>
         <h2 className={HEADING}>Path</h2>
         <div className="flex items-start gap-2">
-          <code className="min-w-0 flex-1 break-all rounded bg-slate-950 p-1.5 text-[11px] text-[color:var(--color-ink-muted)]">
+          <code className="min-w-0 flex-1 break-all rounded bg-surface-sunken p-1.5 text-[11px] text-[color:var(--color-ink-muted)]">
             {node.id}
           </code>
           <button
@@ -47,7 +47,7 @@ export function DiffDetail({ node }: { readonly node: DiffNode | undefined }) {
             aria-label="Copy path"
             disabled={!addressable}
             title={addressable ? 'Copy path' : 'This position has no access expression'}
-            className="flex shrink-0 cursor-pointer items-center gap-1 rounded border border-slate-700 px-1.5 py-1 text-[11px] text-[color:var(--color-ink-muted)] transition-colors duration-150 hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-30"
+            className="flex shrink-0 cursor-pointer items-center gap-1 rounded border border-line-strong px-1.5 py-1 text-[11px] text-[color:var(--color-ink-muted)] transition-colors duration-150 hover:bg-surface-raised disabled:cursor-not-allowed disabled:opacity-30"
             onClick={copyPath}
           >
             {copied ? <Check className="text-[color:var(--color-node-scalar)]" /> : <Copy />}
@@ -85,7 +85,7 @@ function Side({ title, node, tone }: { readonly title: string; readonly node: No
       {node === undefined ? (
         <p className="italic text-[color:var(--color-ink-subtle)]">Not present</p>
       ) : (
-        <pre className={`max-h-72 overflow-auto whitespace-pre-wrap break-all rounded bg-slate-950 p-1.5 text-[11px] ${tone}`}>
+        <pre className={`max-h-72 overflow-auto whitespace-pre-wrap break-all rounded bg-surface-sunken p-1.5 text-[11px] ${tone}`}>
           {formatValue(node)}
         </pre>
       )}

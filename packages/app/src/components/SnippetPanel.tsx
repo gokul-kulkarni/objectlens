@@ -37,7 +37,7 @@ export function SnippetPanel() {
   }, []);
 
   return (
-    <section className="shrink-0 border-t border-slate-800 pt-2">
+    <section className="shrink-0 border-t border-line pt-2">
       <button
         type="button"
         aria-expanded={isOpen}
@@ -58,14 +58,14 @@ export function SnippetPanel() {
 
           <button
             type="button"
-            className="flex w-fit cursor-pointer items-center gap-1.5 rounded border border-slate-700 px-2 py-1 text-[11px] text-[color:var(--color-ink-muted)] transition-colors duration-150 hover:bg-slate-800"
+            className="flex w-fit cursor-pointer items-center gap-1.5 rounded border border-line-strong px-2 py-1 text-[11px] text-[color:var(--color-ink-muted)] transition-colors duration-150 hover:bg-surface-raised"
             onClick={copy}
           >
             {copied ? <Check className="text-[color:var(--color-node-scalar)]" /> : <Copy />}
             {copied ? 'Copied' : 'Copy snippet'}
           </button>
 
-          <pre className="max-h-40 overflow-auto rounded border border-slate-800 bg-slate-950 p-2 font-mono text-[10px] leading-relaxed text-[color:var(--color-ink-subtle)]">
+          <pre className="max-h-40 overflow-auto rounded border border-line bg-surface-sunken p-2 font-mono text-[10px] leading-relaxed text-[color:var(--color-ink-subtle)]">
             {snippet}
           </pre>
         </div>

@@ -58,7 +58,7 @@ export function DiffRowView({ row, isSelected, onSelect, onToggle }: DiffRowProp
       data-testid={`diff-row-${node.id}`}
       data-status={node.status}
       className={`flex h-full cursor-pointer items-center gap-1.5 whitespace-nowrap pr-3 font-mono text-xs transition-colors duration-100 ${
-        isSelected ? 'bg-sky-900/60 ring-1 ring-inset ring-sky-600' : `${status.tint} hover:bg-slate-800/70`
+        isSelected ? 'bg-accent-wash ring-1 ring-inset ring-brand' : `${status.tint} hover:bg-surface-raised/70`
       }`}
       style={{ paddingLeft: depth * INDENT_PX + 4 }}
       onClick={() => onSelect(node.id)}
@@ -73,7 +73,7 @@ export function DiffRowView({ row, isSelected, onSelect, onToggle }: DiffRowProp
         tabIndex={-1}
         className={`-my-1 shrink-0 rounded p-1 transition-colors duration-150 ${
           hasChildren
-            ? 'cursor-pointer text-slate-400 hover:bg-slate-700/60 hover:text-slate-100'
+            ? 'cursor-pointer text-ink-subtle hover:bg-surface-hover/60 hover:text-ink'
             : 'pointer-events-none text-[color:var(--color-ink-faint)]'
         }`}
         onClick={(event) => {
@@ -109,7 +109,7 @@ export function DiffRowView({ row, isSelected, onSelect, onToggle }: DiffRowProp
         </span>
       )}
       {node.moved !== undefined && (
-        <span className="rounded bg-slate-800 px-1 text-[10px] text-[color:var(--color-ink-subtle)]">
+        <span className="rounded bg-surface-raised px-1 text-[10px] text-[color:var(--color-ink-subtle)]">
           moved {node.moved.from} → {node.moved.to}
         </span>
       )}

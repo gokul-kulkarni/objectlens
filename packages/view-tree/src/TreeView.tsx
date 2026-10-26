@@ -38,7 +38,7 @@ export function TreeView({
   const handleToggle = useCallback((id: string) => onToggleExpand(id), [onToggleExpand]);
 
   if (rows.length === 0) {
-    return <p className="p-4 text-sm text-slate-500">Nothing to show.</p>;
+    return <p className="p-4 text-sm text-ink-subtle">Nothing to show.</p>;
   }
 
   return (

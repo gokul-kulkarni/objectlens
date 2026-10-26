@@ -17,7 +17,7 @@ import { ResizeHandle } from '../components/ResizeHandle.jsx';
 import { PANEL_LIMITS, type PanelControls } from '../state/usePanelSizes.js';
 
 const TOOL_BUTTON =
-  'flex shrink-0 cursor-pointer items-center gap-1 rounded border border-slate-700 px-1.5 py-0.5 text-[11px] text-[color:var(--color-ink-muted)] transition-colors duration-150 hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-40';
+  'flex shrink-0 cursor-pointer items-center gap-1 rounded border border-line-strong px-1.5 py-0.5 text-[11px] text-[color:var(--color-ink-muted)] transition-colors duration-150 hover:bg-surface-raised disabled:cursor-not-allowed disabled:opacity-40';
 
 export function CompareMode({ panels }: { readonly panels: PanelControls }) {
   const compare = useCompare();
@@ -35,7 +35,7 @@ export function CompareMode({ panels }: { readonly panels: PanelControls }) {
   return (
     <main className="flex min-h-0 flex-1 flex-col lg:flex-row">
       <div
-        className="min-h-0 shrink-0 border-b border-slate-800 lg:w-[var(--left-panel)] lg:border-b-0"
+        className="min-h-0 shrink-0 border-b border-line lg:w-[var(--left-panel)] lg:border-b-0"
         style={{ '--left-panel': `${sizes.left}px` } as CSSProperties}
       >
         <CompareInputs
@@ -69,7 +69,7 @@ export function CompareMode({ panels }: { readonly panels: PanelControls }) {
       />
 
       <div className="flex min-h-0 min-w-0 flex-1 flex-col" onKeyDown={onKeyDown}>
-        <div className="flex shrink-0 flex-wrap items-center gap-2 border-b border-slate-800 px-3 py-1.5 text-xs">
+        <div className="flex shrink-0 flex-wrap items-center gap-2 border-b border-line px-3 py-1.5 text-xs">
           {state.diff === null ? (
             <span className="text-[color:var(--color-ink-subtle)]">No comparison yet</span>
           ) : (
@@ -82,7 +82,7 @@ export function CompareMode({ panels }: { readonly panels: PanelControls }) {
               <label className="ml-auto flex cursor-pointer items-center gap-1.5 text-[11px] text-[color:var(--color-ink-muted)]">
                 <input
                   type="checkbox"
-                  className="cursor-pointer accent-sky-600"
+                  className="cursor-pointer accent-brand"
                   checked={state.onlyChanges}
                   onChange={(event) => compare.setOnlyChanges(event.target.checked)}
                 />
@@ -107,7 +107,7 @@ export function CompareMode({ panels }: { readonly panels: PanelControls }) {
         </div>
 
         {state.diff !== null && (state.diff.truncated || state.diff.notes.length > 0) && (
-          <ul className="shrink-0 border-b border-slate-800 bg-amber-500/5 px-3 py-1 text-[11px] text-[color:var(--color-caution)]">
+          <ul className="shrink-0 border-b border-line bg-amber-500/5 px-3 py-1 text-[11px] text-[color:var(--color-caution)]">
             {state.diff.truncated && (
               <li className="flex items-center gap-1.5">
                 <WarningIcon className="shrink-0" />
@@ -168,7 +168,7 @@ export function CompareMode({ panels }: { readonly panels: PanelControls }) {
       />
 
       <div
-        className="min-h-0 shrink-0 border-t border-slate-800 lg:w-[var(--right-panel)] lg:border-t-0"
+        className="min-h-0 shrink-0 border-t border-line lg:w-[var(--right-panel)] lg:border-t-0"
         style={{ '--right-panel': `${sizes.right}px` } as CSSProperties}
       >
         <DiffDetail node={state.selection === null ? undefined : index?.byId.get(state.selection)} />

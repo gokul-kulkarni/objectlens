@@ -44,7 +44,7 @@ export function TreeRowView({ row, isSelected, onSelect, onToggle }: TreeRowProp
         // the hit area grows without the row getting taller.
         className={`-my-1 shrink-0 rounded p-1 transition-colors duration-150 ${
           hasChildren
-            ? 'cursor-pointer text-slate-400 hover:bg-slate-700/60 hover:text-slate-100'
+            ? 'cursor-pointer text-ink-subtle hover:bg-surface-hover/60 hover:text-ink'
             : 'pointer-events-none text-[color:var(--color-ink-faint)]'
         }`}
         onClick={(event) => {
@@ -115,9 +115,9 @@ function rowClass(isSelected: boolean, isMatch: boolean): string {
   // 15%, not 25%: the type chip and container summary are `--color-ink-subtle`, which measured
   // 4.46:1 against a 25% tint — just under AA. The inset ring is the stronger selection cue
   // anyway, so lightening the fill costs nothing and buys 5.40:1.
-  if (isSelected) return `${base} bg-sky-500/15 ring-1 ring-inset ring-sky-400/60`;
+  if (isSelected) return `${base} bg-brand/15 ring-1 ring-inset ring-brand/60`;
   if (isMatch) return `${base} bg-amber-400/15 hover:bg-amber-400/25`;
-  return `${base} hover:bg-slate-800/70`;
+  return `${base} hover:bg-surface-raised/70`;
 }
 
 function labelClass(relation: ChildRelation | 'root'): string {

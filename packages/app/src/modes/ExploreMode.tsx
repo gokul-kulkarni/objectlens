@@ -43,7 +43,7 @@ export function ExploreMode({ panels }: { readonly panels: PanelControls }) {
     // dragging a divider on a phone is not a thing anyone wants to do.
     <main className="flex min-h-0 flex-1 flex-col lg:flex-row">
       <div
-        className="min-h-0 shrink-0 border-b border-slate-800 lg:w-[var(--left-panel)] lg:border-b-0"
+        className="min-h-0 shrink-0 border-b border-line lg:w-[var(--left-panel)] lg:border-b-0"
         style={{ '--left-panel': `${sizes.left}px` } as CSSProperties}
       >
         <InputPanel
@@ -70,14 +70,14 @@ export function ExploreMode({ panels }: { readonly panels: PanelControls }) {
       />
 
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-        <div className="flex shrink-0 items-center gap-2 border-b border-slate-800 px-3 py-1.5">
+        <div className="flex shrink-0 items-center gap-2 border-b border-line px-3 py-1.5">
           <div className="relative min-w-0 flex-1">
             <Search className="pointer-events-none absolute left-2 top-1/2 -translate-y-1/2 text-[11px] text-[color:var(--color-ink-subtle)]" />
             <input
               type="search"
               aria-label="Search"
               placeholder="Search keys and values…"
-              className="w-full rounded border border-slate-800 bg-slate-950 py-1 pl-7 pr-2 text-xs transition-colors duration-150 outline-none focus:border-sky-700"
+              className="w-full rounded border border-line bg-surface-sunken py-1 pl-7 pr-2 text-xs transition-colors duration-150 outline-none focus:border-brand"
               value={state.query}
               onChange={(event) => viewer.setQuery(event.target.value)}
             />
@@ -149,7 +149,7 @@ export function ExploreMode({ panels }: { readonly panels: PanelControls }) {
       />
 
       <div
-        className="min-h-0 shrink-0 border-t border-slate-800 lg:w-[var(--right-panel)] lg:border-t-0"
+        className="min-h-0 shrink-0 border-t border-line lg:w-[var(--right-panel)] lg:border-t-0"
         style={{ '--right-panel': `${sizes.right}px` } as CSSProperties}
       >
         {state.graph !== null ? (
@@ -189,7 +189,7 @@ function EmptyState({ status }: { readonly status: string }) {
       <p className="mb-3 leading-relaxed">
         Paste a Python <code className="font-mono text-[color:var(--color-node-scalar)]">repr()</code>{' '}
         dump or some JSON on the left, then press{' '}
-        <kbd className="rounded border border-slate-700 bg-slate-800 px-1.5 py-0.5 font-mono text-[11px] text-[color:var(--color-ink-muted)]">
+        <kbd className="rounded border border-line-strong bg-surface-raised px-1.5 py-0.5 font-mono text-[11px] text-[color:var(--color-ink-muted)]">
           ⌘&#9166;
         </kbd>
         .
