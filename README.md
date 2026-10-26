@@ -4,7 +4,7 @@ Explore structured objects — Python `repr()` output, JSON, YAML, anything with
 navigable tree and a node-link graph. Compare two of them, in any mix of formats. Read a README,
 Mermaid diagrams included.
 
-**→ [gokul-kulkarni.github.io/objectlens](https://gokul-kulkarni.github.io/objectlens/)**
+**→ [objectlens.gokulkulkarni.dev](https://objectlens.gokulkulkarni.dev/)**
 
 Nothing is uploaded. Parsing happens in a Web Worker in your own tab, and the deployment is a
 folder of static files with no backend to send anything to. The one network request ObjectLens

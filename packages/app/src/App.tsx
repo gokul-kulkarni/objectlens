@@ -34,7 +34,7 @@ export function App() {
           Object<span className="text-[color:var(--color-brand)]">Lens</span>
         </h1>
         <p className="hidden text-xs text-[color:var(--color-ink-subtle)] sm:block">
-          Explore Python objects, JSON and more
+          Explore, compare and read structured data — in your browser
         </p>
 
         <div className="ml-auto">

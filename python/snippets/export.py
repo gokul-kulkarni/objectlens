@@ -3,7 +3,7 @@
     >>> lens(my_object)                 # writes objectlens-snapshot.json
     >>> print(lens_json(my_object))     # or get the JSON as a string
 
-Then open the file at https://gokul-kulkarni.github.io/objectlens/ (or your own build).
+Then open the file at https://objectlens.gokulkulkarni.dev/ (or your own build).
 
 Why this exists
 ---------------
@@ -46,7 +46,7 @@ __all__ = ["lens", "lens_json", "to_snapshot"]
 # across deployments or every snapshot ever written stops being recognised. `VIEWER_URL` is the
 # address that actually has to resolve, which is why the two are separate strings.
 SCHEMA_URL = "https://objectlens.dev/schema/v1"
-VIEWER_URL = "https://gokul-kulkarni.github.io/objectlens/"
+VIEWER_URL = "https://objectlens.gokulkulkarni.dev/"
 SCHEMA_VERSION = 1
 GENERATOR = "objectlens-snippet/0.1.0"
 SOURCE_ID = "python-live"
