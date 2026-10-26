@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './App.jsx';
+import { loadAnalytics } from './analytics.js';
 import './index.css';
 
 const container = document.getElementById('root');
@@ -11,3 +12,6 @@ createRoot(container).render(
     <App />
   </StrictMode>,
 );
+
+// Page-view analytics, on the public site only — see analytics.ts.
+loadAnalytics();

@@ -6,10 +6,16 @@ Mermaid diagrams included.
 
 **→ [objectlens.gokulkulkarni.dev](https://objectlens.gokulkulkarni.dev/)**
 
-Nothing is uploaded. Parsing happens in a Web Worker in your own tab, and the deployment is a
-folder of static files with no backend to send anything to. The one network request ObjectLens
-ever makes is the Markdown viewer's **Load**, which fetches the URL you typed — read-only, with no
-cookies — and only when you press it.
+Nothing you paste or open is uploaded. Parsing happens in a Web Worker in your own tab, and the
+deployment is a folder of static files with no backend to send anything to. ObjectLens makes two
+kinds of network request:
+
+- The Markdown viewer's **Load**, which fetches the URL you typed — read-only, with no cookies —
+  and only when you press it.
+- On the public site only, [Cloudflare Web Analytics](https://www.cloudflare.com/web-analytics/)
+  counts page views: page path, referrer, browser, country and load timing. It sets no cookies and
+  never sees your data. Local builds and the Python package never load it
+  (`packages/app/src/analytics.ts`).
 
 `print(obj)` gives you an unreadable wall of text, `pprint` gives you a slightly better wall, and a
 real debugger needs an IDE and a live process. ObjectLens takes the text you already copied out of
