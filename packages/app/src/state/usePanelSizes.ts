@@ -121,3 +121,6 @@ export function usePanelSizes() {
 
   return { sizes, setPanel, adjustPanel, resetPanel };
 }
+
+/** What `usePanelSizes` returns — shared by every mode, so panel widths carry across them. */
+export type PanelControls = ReturnType<typeof usePanelSizes>;

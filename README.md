@@ -1,12 +1,15 @@
 # ObjectLens
 
 Explore structured objects — Python `repr()` output, JSON, YAML, anything with an adapter — as a
-navigable tree and a node-link graph.
+navigable tree and a node-link graph. Compare two of them, in any mix of formats. Read a README,
+Mermaid diagrams included.
 
 **→ [gokul-kulkarni.github.io/objectlens](https://gokul-kulkarni.github.io/objectlens/)**
 
 Nothing is uploaded. Parsing happens in a Web Worker in your own tab, and the deployment is a
-folder of static files with no backend to send anything to.
+folder of static files with no backend to send anything to. The one network request ObjectLens
+ever makes is the Markdown viewer's **Load**, which fetches the URL you typed — read-only, with no
+cookies — and only when you press it.
 
 `print(obj)` gives you an unreadable wall of text, `pprint` gives you a slightly better wall, and a
 real debugger needs an IDE and a live process. ObjectLens takes the text you already copied out of
@@ -29,9 +32,26 @@ Parsing runs in a Worker; the build is static with no backend.
 | 5 | Graph view | ✅ done |
 | 7 | Zero-install export snippet | ✅ done |
 | 9 | YAML adapter + plugin guide | ✅ done — the extensibility proof held |
+| 10 | Compare mode | ✅ done |
+| 11 | Markdown / README viewer with Mermaid | ✅ done |
 | 8 | Python live mode | ← next |
 
-847 TypeScript tests + 50 Python tests, 89.8% line coverage. `bun run dev` and paste something.
+1047 TypeScript tests + 50 Python tests, 92.4% line coverage. `bun run dev` and paste something.
+
+## Modes
+
+The header switches between three modes; each keeps its state while you look at another, and the
+URL hash (`#compare`, `#markdown`) links straight to one.
+
+- **Explore** — one object as a tree or a graph.
+- **Compare** — two objects as one merged tree of differences: added, removed, changed, with `n`/`p`
+  to step through them. It diffs the IR, not the text, so key order, `1.50` vs `1.5`, and the
+  source format do not count as changes — a JSON file and its YAML twin compare equal. Arrays match
+  by position, or by an identity field you name (`id`) so reordered records line up as moves.
+- **Markdown** — paste, open or fetch a document. GitHub links (`github.com/owner/repo`,
+  `…/blob/…`, `…/tree/…`) resolve to the raw file, with relative links and images pointing back at
+  the repository. ```` ```mermaid ```` fences are drawn as diagrams. Rendered HTML is sanitised
+  with DOMPurify, Mermaid runs in strict mode, and both load only when the mode is first opened.
 
 ## Architecture
 
@@ -157,8 +177,10 @@ esbuild's postinstall fetches its platform binary — Vite and Vitest are unusab
 packages/core/            IR, registries, node sources, traversal — no React, no adapters
 packages/adapter-*/       source format → IR (JSON, Python repr, snapshot, YAML)
 packages/view-*/          IR → rendering (tree, graph)
+packages/diff/            structural diff of two graphs — depends on core only
 packages/icons/           the SVG icon set both views draw with
-packages/app/             the Vite site; wires the registries together
+packages/app/             the Vite site; wires the registries together, and hosts the
+                          Compare (src/compare) and Markdown (src/markdown) modes
 python/snippets/export.py the zero-install exporter — stdlib only, meant to be pasted
 python/tests/             its unittest suite
 python/fixtures/          corpus generators; output committed under docs/fixtures/

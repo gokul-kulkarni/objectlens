@@ -18,7 +18,7 @@ import {
   type ObjectGraph,
 } from '@objectlens/core';
 import { adapters } from '../registry.js';
-import type { ParseRequest, ParseResponse } from '../worker/parse.worker.js';
+import type { ParseRequest, WorkerResponse } from '../worker/parse.worker.js';
 
 export interface ViewerState {
   readonly text: string;
@@ -119,9 +119,9 @@ export function useViewer() {
       type: 'module',
     });
 
-    worker.addEventListener('message', (event: MessageEvent<ParseResponse>) => {
+    worker.addEventListener('message', (event: MessageEvent<WorkerResponse>) => {
       // Ignore responses from superseded requests, or fast typing shows stale results.
-      if (event.data.id !== requestId.current) return;
+      if (event.data.type !== 'parse' || event.data.id !== requestId.current) return;
 
       dispatch({
         type: 'parsed',
@@ -153,6 +153,7 @@ export function useViewer() {
     dispatch({ type: 'parseStarted' });
 
     const request: ParseRequest = {
+      type: 'parse',
       id: requestId.current,
       adapterId: effectiveAdapterId,
       text: state.text,

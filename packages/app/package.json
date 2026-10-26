@@ -16,8 +16,14 @@
     "@objectlens/adapter-snapshot": "workspace:*",
     "@objectlens/adapter-yaml": "workspace:*",
     "@objectlens/core": "workspace:*",
+    "@objectlens/diff": "workspace:*",
     "@objectlens/icons": "workspace:*",
     "@objectlens/view-graph": "workspace:*",
-    "@objectlens/view-tree": "workspace:*"
+    "@objectlens/view-tree": "workspace:*",
+    "@tanstack/react-virtual": "^3.13.12",
+    "dompurify": "^3.4.17",
+    "highlight.js": "^11.12.0",
+    "marked": "^18.1.1",
+    "mermaid": "^12.2.0"
   }
 }

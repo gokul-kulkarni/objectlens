@@ -20,6 +20,9 @@
       "path": "./packages/adapter-yaml"
     },
     {
+      "path": "./packages/diff"
+    },
+    {
       "path": "./packages/view-tree"
     },
     {
