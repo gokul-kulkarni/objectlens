@@ -1,40 +1,31 @@
 /**
  * App shell.
  *
- * Holds the layout and owns the state that views share. It resolves which view to render from the
- * registry rather than importing one directly — the switcher lists whatever is registered and can
- * render the current graph, so a new view appears without this file changing.
+ * Holds the header and the mode switcher; each mode owns its own state. A mode mounts the first
+ * time it is opened and then stays mounted while hidden, so switching to Compare and back never
+ * throws away a parsed graph, a diff, or a rendered document — and a visitor who never opens the
+ * Markdown viewer never downloads its renderer. Panel widths are shared, so the layout does not
+ * jump between modes.
  */
 
-import { useMemo, type CSSProperties } from 'react';
-import { InMemoryNodeSource } from '@objectlens/core';
-import { views } from './registry.js';
-import { useViewer } from './state/useViewer.js';
-import { InputPanel } from './components/InputPanel.jsx';
-import { Inspector } from './components/Inspector.jsx';
-import { DiagnosticsPanel } from './components/DiagnosticsPanel.jsx';
-import { Search, Spinner } from '@objectlens/icons';
-import { ResizeHandle } from './components/ResizeHandle.jsx';
-import { PANEL_LIMITS, usePanelSizes } from './state/usePanelSizes.js';
+import { lazy, Suspense, useState, type ReactNode } from 'react';
+import { Spinner } from '@objectlens/icons';
+import { ExploreMode } from './modes/ExploreMode.jsx';
+import { CompareMode } from './modes/CompareMode.jsx';
+import { SegmentedControl } from './components/SegmentedControl.jsx';
+import { MODES, useMode, type Mode } from './state/useMode.js';
+import { usePanelSizes } from './state/usePanelSizes.js';
 
-const EMPTY_MATCHES: ReadonlySet<string> = new Set();
+const MarkdownMode = lazy(() => import('./modes/MarkdownMode.jsx').then((module) => ({ default: module.MarkdownMode })));
 
 export function App() {
-  const viewer = useViewer();
-  const { sizes, setPanel, adjustPanel, resetPanel } = usePanelSizes();
-  const { state, detections, effectiveAdapterId, searchResult } = viewer;
+  const { mode, setMode } = useMode();
+  const panels = usePanelSizes();
+  const [visited, setVisited] = useState<ReadonlySet<Mode>>(() => new Set([mode]));
 
-  const nodeSource = useMemo(
-    () => (state.graph === null ? null : new InMemoryNodeSource(state.graph)),
-    [state.graph],
-  );
-
-  const available = useMemo(
-    () => (state.graph === null ? [] : views.available(state.graph)),
-    [state.graph],
-  );
-
-  const active = available.find((view) => view.id === state.viewId) ?? available[0];
+  // Recorded during render rather than in an effect, so a mode mounts on the same frame it is
+  // first shown instead of flashing empty for one.
+  if (!visited.has(mode)) setVisited(new Set([...visited, mode]));
 
   return (
     <div className="flex h-full flex-col bg-slate-900 text-[color:var(--color-ink)]">
@@ -46,180 +37,48 @@ export function App() {
           Explore Python objects, JSON and more
         </p>
 
-        {state.graph !== null && (
-          <div className="ml-auto flex items-center gap-3 text-xs text-[color:var(--color-ink-subtle)]">
-            <span className="tabular">
-              {state.graph.nodesById.size.toLocaleString()} nodes · {Math.round(state.elapsedMs)} ms
-            </span>
-            {available.length > 1 && (
-              <div className="flex overflow-hidden rounded border border-slate-700">
-                {available.map((view) => (
-                  <button
-                    key={view.id}
-                    type="button"
-                    title={view.description}
-                    aria-pressed={view.id === active?.id}
-                    className={`cursor-pointer px-2 py-0.5 transition-colors duration-150 ${
-                      view.id === active?.id
-                        ? 'bg-sky-700 text-white'
-                        : 'text-[color:var(--color-ink-muted)] hover:bg-slate-800'
-                    }`}
-                    onClick={() => viewer.setView(view.id)}
-                  >
-                    {view.label}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+        <div className="ml-auto">
+          <SegmentedControl label="Mode" options={MODES} value={mode} onChange={setMode} />
+        </div>
       </header>
 
-      {/*
-        Flex rather than grid: the panels are user-resizable, so their widths are inline styles
-        driven by the drag handles. Below `lg` this stacks vertically and the handles hide, since
-        dragging a divider on a phone is not a thing anyone wants to do.
-      */}
-      <main className="flex min-h-0 flex-1 flex-col lg:flex-row">
-        <div
-          className="min-h-0 shrink-0 border-b border-slate-800 lg:w-[var(--left-panel)] lg:border-b-0"
-          style={{ '--left-panel': `${sizes.left}px` } as CSSProperties}
-        >
-          <InputPanel
-            text={state.text}
-            detections={detections}
-            adapterId={state.adapterId}
-            effectiveAdapterId={effectiveAdapterId}
-            status={state.status}
-            onChangeText={viewer.setInput}
-            onChangeAdapter={viewer.setAdapter}
-            onParse={viewer.parse}
-          />
-        </div>
-
-        <ResizeHandle
-          label="Resize input panel"
-          value={sizes.left}
-          min={PANEL_LIMITS.left.min}
-          max={PANEL_LIMITS.left.max}
-          side="left"
-          onResize={(width) => setPanel('left', width)}
-          onAdjust={(delta) => adjustPanel('left', delta)}
-          onReset={() => resetPanel('left')}
-        />
-
-        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-          <div className="flex shrink-0 items-center gap-2 border-b border-slate-800 px-3 py-1.5">
-            <div className="relative min-w-0 flex-1">
-              <Search className="pointer-events-none absolute left-2 top-1/2 -translate-y-1/2 text-[11px] text-[color:var(--color-ink-subtle)]" />
-              <input
-                type="search"
-                aria-label="Search"
-                placeholder="Search keys and values…"
-                className="w-full rounded border border-slate-800 bg-slate-950 py-1 pl-7 pr-2 text-xs transition-colors duration-150 outline-none focus:border-sky-700"
-                value={state.query}
-                onChange={(event) => viewer.setQuery(event.target.value)}
-              />
-            </div>
-            {searchResult !== null && (
-              <span
-                role="status"
-                aria-live="polite"
-                className="tabular shrink-0 text-[11px] text-[color:var(--color-ink-subtle)]"
-              >
-                {searchResult.matches.size}
-                {searchResult.truncated ? '+' : ''} match
-                {searchResult.matches.size === 1 ? '' : 'es'}
-              </span>
-            )}
-          </div>
-
-          <div className="min-h-0 flex-1">
-            {state.graph !== null && nodeSource !== null && active !== undefined ? (
-              <active.Component
-                graph={state.graph}
-                nodeSource={nodeSource}
-                selection={state.selection}
-                onSelect={viewer.select}
-                expanded={state.expanded}
-                onToggleExpand={viewer.toggleExpand}
-                query={state.query}
-                matches={searchResult?.matches ?? EMPTY_MATCHES}
-              />
-            ) : (
-              <EmptyState status={state.status} />
-            )}
-          </div>
-
-          <DiagnosticsPanel
-            diagnostics={state.diagnostics}
-            parsed={state.graph !== null}
-            onSelect={viewer.select}
-          />
-        </div>
-
-        <ResizeHandle
-          label="Resize inspector panel"
-          value={sizes.right}
-          min={PANEL_LIMITS.right.min}
-          max={PANEL_LIMITS.right.max}
-          side="right"
-          onResize={(width) => setPanel('right', width)}
-          onAdjust={(delta) => adjustPanel('right', delta)}
-          onReset={() => resetPanel('right')}
-        />
-
-        <div
-          className="min-h-0 shrink-0 border-t border-slate-800 lg:w-[var(--right-panel)] lg:border-t-0"
-          style={{ '--right-panel': `${sizes.right}px` } as CSSProperties}
-        >
-          {state.graph !== null ? (
-            <Inspector graph={state.graph} selection={state.selection} onSelect={viewer.select} />
-          ) : (
-            <p className="p-3 text-xs text-[color:var(--color-ink-subtle)]">No object loaded.</p>
-          )}
-        </div>
-      </main>
+      <ModeFrame active={mode === 'explore'} visited={visited.has('explore')}>
+        <ExploreMode panels={panels} />
+      </ModeFrame>
+      <ModeFrame active={mode === 'compare'} visited={visited.has('compare')}>
+        <CompareMode panels={panels} />
+      </ModeFrame>
+      <ModeFrame active={mode === 'markdown'} visited={visited.has('markdown')}>
+        <Suspense fallback={<Loading />}>
+          <MarkdownMode panels={panels} />
+        </Suspense>
+      </ModeFrame>
     </div>
   );
 }
 
-function EmptyState({ status }: { readonly status: string }) {
-  if (status === 'parsing') {
-    return (
-      <div
-        role="status"
-        aria-live="polite"
-        className="flex items-center gap-2 p-6 text-sm text-[color:var(--color-ink-subtle)]"
-      >
-        <Spinner className="text-base" />
-        Parsing…
-      </div>
-    );
-  }
-
-  if (status === 'failed') {
-    return (
-      <p role="alert" className="p-6 text-sm text-[color:var(--color-danger)]">
-        Nothing could be parsed from that input — see the diagnostics below.
-      </p>
-    );
-  }
-
+function ModeFrame({
+  active,
+  visited,
+  children,
+}: {
+  readonly active: boolean;
+  readonly visited: boolean;
+  readonly children: ReactNode;
+}) {
+  if (!visited) return null;
   return (
-    <div className="max-w-md p-6 text-sm text-[color:var(--color-ink-subtle)]">
-      <p className="mb-3 leading-relaxed">
-        Paste a Python <code className="font-mono text-[color:var(--color-node-scalar)]">repr()</code>{' '}
-        dump or some JSON on the left, then press{' '}
-        <kbd className="rounded border border-slate-700 bg-slate-800 px-1.5 py-0.5 font-mono text-[11px] text-[color:var(--color-ink-muted)]">
-          ⌘&#9166;
-        </kbd>
-        .
-      </p>
-      <p className="text-xs leading-relaxed">
-        Or load one of the examples below the input — they cover cycles, bignums, and deliberately
-        malformed text.
-      </p>
+    <div hidden={!active} className="flex min-h-0 flex-1 flex-col">
+      {children}
+    </div>
+  );
+}
+
+function Loading() {
+  return (
+    <div role="status" className="flex items-center gap-2 p-6 text-sm text-[color:var(--color-ink-subtle)]">
+      <Spinner className="text-base" />
+      Loading…
     </div>
   );
 }

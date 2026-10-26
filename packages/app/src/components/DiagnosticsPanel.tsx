@@ -14,9 +14,11 @@ export interface DiagnosticsPanelProps {
   /** Whether a graph came out of the parse. Decides whether this strip reassures or explains. */
   readonly parsed: boolean;
   readonly onSelect: (id: NodeId) => void;
+  /** Names the input these belong to, where a mode has more than one. */
+  readonly source?: string;
 }
 
-export function DiagnosticsPanel({ diagnostics, parsed, onSelect }: DiagnosticsPanelProps) {
+export function DiagnosticsPanel({ diagnostics, parsed, onSelect, source }: DiagnosticsPanelProps) {
   const [open, setOpen] = useState(false);
 
   if (diagnostics.length === 0) return null;
@@ -37,6 +39,7 @@ export function DiagnosticsPanel({ diagnostics, parsed, onSelect }: DiagnosticsP
         ) : (
           <ChevronRight className="shrink-0 text-[color:var(--color-ink-subtle)]" />
         )}
+        {source !== undefined && <span className="font-medium text-[color:var(--color-ink-muted)]">{source}</span>}
         {errors > 0 && <span className="text-[color:var(--color-danger)]">{errors} error{errors === 1 ? '' : 's'}</span>}
         {warnings > 0 && (
           <span className="text-[color:var(--color-caution)]">

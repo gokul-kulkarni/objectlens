@@ -40,6 +40,9 @@
     },
     {
       "path": "../adapter-yaml"
+    },
+    {
+      "path": "../diff"
     }
   ]
 }

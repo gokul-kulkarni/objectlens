@@ -24,9 +24,13 @@ export default defineConfig({
         // Matched by module path rather than by package name: neither is a direct dependency of
         // this package — they arrive through the view and adapter packages — so naming them as
         // entry points fails to resolve.
+        //
+        // Mermaid is the exception: it is larger than everything else combined, and only a
+        // Markdown document containing a diagram needs it, so it stays a lazy `import()` chunk.
         manualChunks(id: string) {
           if (id.includes('/node_modules/@xyflow/')) return 'canvas';
           if (id.includes('/node_modules/yaml/')) return 'grammars';
+          if (/\/node_modules\/(marked|dompurify|highlight\.js)\//.test(id)) return 'markdown';
           return undefined;
         },
       },

@@ -92,3 +92,136 @@ cluster: &node
     text: `{'good': 1, 'broken': @@@, 'also_good': [1, 2, 3], 'unterminated': 'oops}`,
   },
 ];
+
+export interface CompareExample {
+  readonly name: string;
+  readonly description: string;
+  readonly left: string;
+  readonly right: string;
+  /** Identity field to match array records by, when the example is about reordering. */
+  readonly arrayKey?: string;
+}
+
+/**
+ * Comparison examples. Each pair shows one thing a line-based text diff gets wrong: key order,
+ * reordered records, and two formats that say the same thing.
+ */
+export const COMPARE_EXAMPLES: readonly CompareExample[] = [
+  {
+    name: 'Config change',
+    description: 'Changed, added and removed settings — and a key order change that is not a change',
+    left: `{
+  "service": "checkout",
+  "replicas": 3,
+  "image": "acme/checkout:1.8.2",
+  "env": { "LOG_LEVEL": "info", "TIMEOUT_MS": 3000, "FEATURE_X": false },
+  "ports": [8080, 9090]
+}`,
+    right: `{
+  "image": "acme/checkout:1.9.0",
+  "service": "checkout",
+  "replicas": "3",
+  "env": { "LOG_LEVEL": "debug", "TIMEOUT_MS": 3000, "RETRIES": 2 },
+  "ports": [8080, 9090]
+}`,
+  },
+  {
+    name: 'Reordered records',
+    description: 'Matched by "id", so a reorder is a move rather than a wall of changes',
+    arrayKey: 'id',
+    left: `[
+  {"id": 1, "name": "Ada", "role": "admin"},
+  {"id": 2, "name": "Grace", "role": "editor"},
+  {"id": 3, "name": "Linus", "role": "viewer"}
+]`,
+    right: `[
+  {"id": 3, "name": "Linus", "role": "viewer"},
+  {"id": 1, "name": "Ada", "role": "owner"},
+  {"id": 4, "name": "Barbara", "role": "editor"}
+]`,
+  },
+  {
+    name: 'JSON vs YAML',
+    description: 'Different formats, same data — compared on meaning, not on text',
+    left: `{"name": "api", "port": 8080, "tls": true, "hosts": ["a.example", "b.example"], "ratio": 1.50}`,
+    right: `name: api
+port: 8080
+tls: true
+hosts:
+  - a.example
+  - b.example
+ratio: 1.5`,
+  },
+];
+
+export interface MarkdownExample {
+  readonly name: string;
+  readonly description: string;
+  readonly text: string;
+}
+
+const FENCE = '```';
+
+/** A README exercising what the Markdown viewer renders beyond plain prose. */
+export const MARKDOWN_EXAMPLES: readonly MarkdownExample[] = [
+  {
+    name: 'README with diagrams',
+    description: 'Tables, task lists, highlighted code, and two Mermaid diagrams',
+    text: `# Checkout service
+
+Handles carts, payment and order placement. See [Architecture](#architecture) for how the pieces fit.
+
+> **Status:** beta — the API may change before 1.0.
+
+## Getting started
+
+${FENCE}bash
+git clone https://github.com/acme/checkout.git
+cd checkout && make dev
+${FENCE}
+
+${FENCE}python
+def total(items: list[Item]) -> Decimal:
+    return sum((item.price * item.qty for item in items), Decimal("0"))
+${FENCE}
+
+## Architecture
+
+${FENCE}mermaid
+flowchart LR
+  client([Browser]) --> api[Checkout API]
+  api --> cart[(Cart store)]
+  api --> pay{{Payment gateway}}
+  api --> orders[(Orders DB)]
+${FENCE}
+
+### Placing an order
+
+${FENCE}mermaid
+sequenceDiagram
+  participant C as Client
+  participant A as API
+  participant P as Payments
+  C->>A: POST /orders
+  A->>P: authorise(amount)
+  P-->>A: ok
+  A-->>C: 201 Created
+${FENCE}
+
+## Configuration
+
+| Variable      | Default | Meaning                          |
+| ------------- | ------- | -------------------------------- |
+| \`PORT\`        | \`8080\`  | HTTP port                        |
+| \`TIMEOUT_MS\`  | \`3000\`  | Upstream timeout in milliseconds |
+| \`RETRIES\`     | \`2\`     | Payment retries before failing   |
+
+## Roadmap
+
+- [x] Cart persistence
+- [x] Payment retries
+- [ ] Partial refunds
+- [ ] Multi-currency
+`,
+  },
+];

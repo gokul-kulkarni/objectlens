@@ -152,3 +152,39 @@ export const ChevronSeparator = (props: IconProps) => (
     <path d="m9 18 6-6-6-6" />
   </Icon>
 );
+
+/** Previous change. */
+export const ArrowUp = (props: IconProps) => (
+  <Icon {...props}>
+    <path d="m5 12 7-7 7 7M12 19V5" />
+  </Icon>
+);
+
+/** Next change. */
+export const ArrowDown = (props: IconProps) => (
+  <Icon {...props}>
+    <path d="M12 5v14M19 12l-7 7-7-7" />
+  </Icon>
+);
+
+/** Exchange the two sides of a comparison. */
+export const Swap = (props: IconProps) => (
+  <Icon {...props}>
+    <path d="m16 3 4 4-4 4M20 7H4M8 21l-4-4 4-4M4 17h16" />
+  </Icon>
+);
+
+/** Load from a URL. */
+export const LinkIcon = (props: IconProps) => (
+  <Icon {...props}>
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+  </Icon>
+);
+
+/** Save a file. */
+export const Download = (props: IconProps) => (
+  <Icon {...props}>
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
+  </Icon>
+);
