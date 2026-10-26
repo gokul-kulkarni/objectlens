@@ -262,7 +262,7 @@ body {
   display: inline-block;
   max-width: 100%;
 }
-.ol-markdown .ol-diagram svg {
-  max-width: 100%;
+/* The diagram only — not the toolbar's icons, which `height: auto` would collapse to nothing. */
+.ol-diagram-content > svg {
   height: auto;
 }

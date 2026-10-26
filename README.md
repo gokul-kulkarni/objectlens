@@ -43,15 +43,35 @@ Parsing runs in a Worker; the build is static with no backend.
 The header switches between three modes; each keeps its state while you look at another, and the
 URL hash (`#compare`, `#markdown`) links straight to one.
 
-- **Explore** — one object as a tree or a graph.
-- **Compare** — two objects as one merged tree of differences: added, removed, changed, with `n`/`p`
-  to step through them. It diffs the IR, not the text, so key order, `1.50` vs `1.5`, and the
-  source format do not count as changes — a JSON file and its YAML twin compare equal. Arrays match
-  by position, or by an identity field you name (`id`) so reordered records line up as moves.
-- **Markdown** — paste, open or fetch a document. GitHub links (`github.com/owner/repo`,
-  `…/blob/…`, `…/tree/…`) resolve to the raw file, with relative links and images pointing back at
-  the repository. ```` ```mermaid ```` fences are drawn as diagrams. Rendered HTML is sanitised
-  with DOMPurify, Mermaid runs in strict mode, and both load only when the mode is first opened.
+### Explore
+
+One object as a tree or a graph, with search, a breadcrumb, and the access path of whatever is
+selected.
+
+![Explore mode: a Python repr() dump as a tree, with the selected field's path in the inspector](docs/images/explore.jpg)
+
+### Compare
+
+Two objects as one merged tree of differences — added, removed, changed — with `n`/`p` to step
+through them and both full values beside the tree. It diffs the IR, not the text, so key order,
+`1.50` vs `1.5`, and the source format do not count as changes: a JSON file and its YAML twin
+compare equal. A changed *type* is called out (`int → string`). Arrays match by position, or by an
+identity field you name (`id`) so reordered records line up as moves.
+
+![Compare mode: two JSON configs with one added, one removed and three changed values](docs/images/compare.jpg)
+
+### Markdown
+
+Paste, open or fetch a document. GitHub links (`github.com/owner/repo`, `…/blob/…`, `…/tree/…`)
+resolve to the raw file, with relative links and images pointing back at the repository.
+```` ```mermaid ```` fences are drawn as diagrams you can zoom (buttons, `+`/`-`/`0`, or Ctrl/⌘ +
+scroll), pan by dragging, open fullscreen, or save as SVG. The document width is yours to pick —
+*Readable*, *Wide* or *Full* — so a large monitor is not mostly margin.
+
+Rendered HTML is sanitised with DOMPurify, Mermaid runs in strict mode, and both load only when the
+mode is first opened.
+
+![Markdown mode: a README with a Mermaid flowchart and sequence diagram, and its outline](docs/images/markdown.jpg)
 
 ## Architecture
 

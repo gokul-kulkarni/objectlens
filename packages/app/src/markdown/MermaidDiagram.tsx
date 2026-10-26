@@ -1,12 +1,14 @@
 /**
- * One Mermaid diagram, with a toolbar to see its source and take the SVG away.
+ * One Mermaid diagram, with a toolbar to see its source, view it fullscreen, and take the SVG
+ * away. Zoom and pan live in `DiagramCanvas`.
  *
  * A diagram that fails to parse shows Mermaid's error beside its source rather than breaking the
  * rest of the document — a README with one typo in a flowchart is still worth reading.
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Check, Copy, Download, Spinner, WarningIcon } from '@objectlens/icons';
+import { DiagramCanvas } from './DiagramCanvas.jsx';
 import { renderDiagram, type DiagramResult } from './mermaid.js';
 
 const TOOL_BUTTON =
@@ -16,6 +18,19 @@ export function MermaidDiagram({ source }: { readonly source: string }) {
   const [result, setResult] = useState<DiagramResult | null>(null);
   const [showSource, setShowSource] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [fullscreen, setFullscreen] = useState(false);
+  const figure = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const onChange = () => setFullscreen(document.fullscreenElement === figure.current && figure.current !== null);
+    document.addEventListener('fullscreenchange', onChange);
+    return () => document.removeEventListener('fullscreenchange', onChange);
+  }, []);
+
+  const toggleFullscreen = () => {
+    if (document.fullscreenElement === figure.current) void document.exitFullscreen();
+    else void figure.current?.requestFullscreen();
+  };
 
   useEffect(() => {
     let current = true;
@@ -49,24 +64,37 @@ export function MermaidDiagram({ source }: { readonly source: string }) {
     URL.revokeObjectURL(url);
   };
 
+  const toolbar = (zoomControls: ReactNode) => (
+    <div className="flex flex-wrap items-center gap-1.5 border-b border-slate-800 px-2 py-1">
+      <span className="text-[10px] font-semibold uppercase tracking-wide text-[color:var(--color-ink-subtle)]">
+        Mermaid
+      </span>
+      <span className="ml-auto" />
+      {zoomControls}
+      <button type="button" className={TOOL_BUTTON} aria-pressed={showSource} onClick={() => setShowSource((value) => !value)}>
+        {showSource ? 'Diagram' : 'Source'}
+      </button>
+      <button type="button" className={TOOL_BUTTON} disabled={svg === null} onClick={copySvg} aria-label="Copy SVG">
+        {copied ? <Check className="text-[color:var(--color-node-scalar)]" /> : <Copy />}
+        SVG
+      </button>
+      <button type="button" className={TOOL_BUTTON} disabled={svg === null} onClick={downloadSvg} aria-label="Download SVG">
+        <Download />
+      </button>
+      {document.fullscreenEnabled && (
+        <button type="button" className={TOOL_BUTTON} disabled={svg === null} aria-pressed={fullscreen} onClick={toggleFullscreen}>
+          {fullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+        </button>
+      )}
+    </div>
+  );
+
   return (
-    <figure className="ol-diagram my-4 rounded border border-slate-800 bg-slate-950/60">
-      <div className="flex items-center gap-1.5 border-b border-slate-800 px-2 py-1">
-        <span className="text-[10px] font-semibold uppercase tracking-wide text-[color:var(--color-ink-subtle)]">
-          Mermaid
-        </span>
-        <span className="ml-auto" />
-        <button type="button" className={TOOL_BUTTON} aria-pressed={showSource} onClick={() => setShowSource((value) => !value)}>
-          {showSource ? 'Diagram' : 'Source'}
-        </button>
-        <button type="button" className={TOOL_BUTTON} disabled={svg === null} onClick={copySvg} aria-label="Copy SVG">
-          {copied ? <Check className="text-[color:var(--color-node-scalar)]" /> : <Copy />}
-          SVG
-        </button>
-        <button type="button" className={TOOL_BUTTON} disabled={svg === null} onClick={downloadSvg} aria-label="Download SVG">
-          <Download />
-        </button>
-      </div>
+    <figure
+      ref={figure}
+      className={`ol-diagram my-4 rounded border border-slate-800 ${fullscreen ? 'flex flex-col bg-slate-950' : 'bg-slate-950/60'}`}
+    >
+      {(svg === null || showSource) && toolbar(null)}
 
       {result === null && !showSource && (
         <div role="status" className="flex items-center gap-2 p-4 text-xs text-[color:var(--color-ink-subtle)]">
@@ -82,10 +110,7 @@ export function MermaidDiagram({ source }: { readonly source: string }) {
         </p>
       )}
 
-      {svg !== null && !showSource && (
-        // Mermaid's own output, produced under `securityLevel: 'strict'`.
-        <div className="flex justify-center overflow-auto p-4" dangerouslySetInnerHTML={{ __html: svg }} />
-      )}
+      {svg !== null && !showSource && <DiagramCanvas svg={svg} fullscreen={fullscreen} toolbar={toolbar} />}
 
       {(showSource || result?.ok === false) && (
         <pre className="m-0 overflow-auto p-3 font-mono text-xs text-[color:var(--color-ink-muted)]">{source}</pre>
