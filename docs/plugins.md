@@ -30,11 +30,13 @@ export interface SourceAdapter {
 
   sniff(input: RawInput): Confidence;       // 0–1. Cheap. Must not throw.
   parse(input: RawInput, context: ParseContext): ParseResult | Promise<ParseResult>;
+  format?(text: string): FormatResult;      // Optional. Adds a Prettify button to the editor.
 }
 ```
 
 That is all of it. `parse` returns `{ graph, diagnostics }`, and `graph` may be `null` only when
-nothing at all could be salvaged.
+nothing at all could be salvaged. `format` returns `{ text }` or `{ error }`; it overwrites what the
+reader typed, so unlike `parse` it refuses input it cannot rewrite faithfully.
 
 ### 2. Two rules that are not negotiable
 

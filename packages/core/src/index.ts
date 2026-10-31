@@ -72,6 +72,7 @@ export {
 // Adapters (axis 1: source format -> IR)
 export type {
   Confidence,
+  FormatResult,
   ParseContext,
   ParseResult,
   RawInput,
@@ -80,6 +81,7 @@ export type {
 
 export { SourceAdapterRegistry, sourceAdapters, type Detection } from './adapter/registry.js';
 export { MAX_PARSE_DEPTH, MAX_INPUT_BYTES } from './adapter/limits.js';
+export { maskDoubleQuotedStrings } from './adapter/sniff.js';
 
 // Views (axis 2: IR -> rendering)
 export type { ViewPlugin, ViewProps } from './view/types.js';

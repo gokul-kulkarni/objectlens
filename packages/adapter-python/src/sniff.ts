@@ -10,7 +10,7 @@
  * carries no Python-specific syntax.
  */
 
-import type { Confidence, RawInput } from '@objectlens/core';
+import { maskDoubleQuotedStrings, type Confidence, type RawInput } from '@objectlens/core';
 
 const HEAD_BYTES = 4096;
 
@@ -23,13 +23,15 @@ const BYTES_LITERAL = /\bb'|\bb"/;
 const SET_CONSTRUCTOR = /\b(?:set|frozenset)\(/;
 /** Double-quoted keys with nothing Python-specific — the shape of plain JSON. */
 const DOUBLE_QUOTED_KEY = /"(?:[^"\\]|\\.)*"\s*:/;
+/** A lone string or number, once masked: legal in both languages and typical of neither. */
+const BARE_JSON_SCALAR = /^(?:""|-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)$/;
 
 export function sniffPython(input: RawInput): Confidence {
   // Matches the strength JSON gives `.json`, so an explicit extension is decisive rather than
   // tying with a content-based score and losing on registration order.
   if (input.filename?.toLowerCase().endsWith('.py') === true) return 0.95;
 
-  const head = input.text.slice(0, HEAD_BYTES).trim();
+  const head = maskDoubleQuotedStrings(input.text.slice(0, HEAD_BYTES).trim());
   if (head === '') return 0;
 
   if (!canStartPythonValue(head)) return 0;
@@ -44,8 +46,8 @@ export function sniffPython(input: RawInput): Confidence {
   if (BYTES_LITERAL.test(head)) score += 0.2;
   if (TUPLE_SHAPE.test(head)) score += 0.1;
 
-  // Nothing Python-specific but clearly keyed and double-quoted: defer to JSON.
-  if (score === 0.4 && DOUBLE_QUOTED_KEY.test(head)) score -= 0.3;
+  // Nothing Python-specific, and shaped like JSON: defer to it.
+  if (score === 0.4 && (DOUBLE_QUOTED_KEY.test(head) || BARE_JSON_SCALAR.test(head))) score -= 0.3;
 
   return clamp(score);
 }

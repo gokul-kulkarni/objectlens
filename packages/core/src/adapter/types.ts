@@ -33,6 +33,9 @@ export interface ParseResult {
   readonly diagnostics: readonly Diagnostic[];
 }
 
+/** Reformatted text, or a sentence for the reader saying why the input was left alone. */
+export type FormatResult = { readonly text: string } | { readonly error: string };
+
 /** Confidence that an adapter can handle an input: 0 = certainly not, 1 = certainly yes. */
 export type Confidence = number;
 
@@ -61,4 +64,12 @@ export interface SourceAdapter {
    * that relies on that has already lost the reader everything after the first bad token.
    */
   parse(input: RawInput, context: ParseContext): ParseResult | Promise<ParseResult>;
+
+  /**
+   * Optional pretty-printer, which puts a Prettify button on the editor.
+   *
+   * Runs on the main thread and overwrites what the reader typed, so it must be quick and must
+   * refuse input it cannot rewrite faithfully. Unlike `parse`, it should not guess.
+   */
+  format?(text: string): FormatResult;
 }

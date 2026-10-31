@@ -3,11 +3,12 @@
  *
  * Shared by every mode — the explorer's single input, both sides of a comparison, and the
  * Markdown editor — so all of them accept input the same way. The format picker appears only when
- * `detections` is given; Markdown has one format and no use for it.
+ * `detections` is given; Markdown has one format and no use for it. Prettify appears only when the
+ * active adapter can format, so a new adapter gets it by implementing `format`.
  */
 
 import { useCallback, useRef, useState, type ReactNode } from 'react';
-import type { Detection } from '@objectlens/core';
+import type { Detection, FormatResult, SourceAdapter } from '@objectlens/core';
 import { FileUp } from '@objectlens/icons';
 
 export interface SourceEditorProps {
@@ -49,7 +50,11 @@ export function SourceEditor({
 }: SourceEditorProps) {
   const [isDragging, setDragging] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
+  // Keyed by the text it describes, so an edit retires the message without an effect to clear it.
+  const [formatFailure, setFormatFailure] = useState<{ text: string; message: string } | null>(null);
   const formatId = `${idPrefix}format`;
+  const activeAdapter = detections?.find((d) => d.adapter.id === effectiveAdapterId)?.adapter;
+  const canPrettify = activeAdapter?.format !== undefined && text.trim() !== '';
 
   const readFile = useCallback(
     async (file: File) => {
@@ -57,6 +62,17 @@ export function SourceEditor({
     },
     [onChangeText],
   );
+
+  const prettify = () => {
+    if (activeAdapter === undefined) return;
+
+    const result = runFormat(activeAdapter, text);
+    if ('error' in result) {
+      setFormatFailure({ text, message: result.error });
+    } else {
+      onChangeText(result.text);
+    }
+  };
 
   return (
     <div
@@ -105,6 +121,17 @@ export function SourceEditor({
           </>
         )}
 
+        {canPrettify && (
+          <button
+            type="button"
+            title="Rewrite the text with consistent indentation"
+            className="shrink-0 cursor-pointer rounded border border-line-strong px-2 py-1 text-xs text-[color:var(--color-ink-muted)] transition-colors duration-150 hover:bg-surface-raised"
+            onClick={prettify}
+          >
+            Prettify
+          </button>
+        )}
+
         <button
           type="button"
           title="Open a file"
@@ -131,6 +158,12 @@ export function SourceEditor({
         {actions}
       </div>
 
+      {formatFailure?.text === text && (
+        <p role="alert" className="text-xs text-[color:var(--color-danger)]">
+          {formatFailure.message}
+        </p>
+      )}
+
       <textarea
         aria-label={label}
         spellCheck={false}
@@ -144,6 +177,16 @@ export function SourceEditor({
       />
     </div>
   );
+}
+
+/** Adapters are untrusted, and a plugin's bug should not take the editor down with it. */
+function runFormat(adapter: SourceAdapter, text: string): FormatResult {
+  try {
+    return adapter.format?.(text) ?? { text };
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : String(error);
+    return { error: `Could not format this input: ${detail}` };
+  }
 }
 
 function labelFor(detections: readonly Detection[], id: string): string {

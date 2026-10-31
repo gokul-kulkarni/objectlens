@@ -59,12 +59,7 @@ class JsonParser {
   }
 
   parse(): JsonParseOutcome {
-    const root = this.#parseValue(this.#allocator.allocate(ROOT_ID), 0);
-
-    const trailing = this.#peek();
-    if (trailing.type !== 'eof') {
-      this.#error(`Unexpected content after the top-level value`, trailing);
-    }
+    const root = this.#isLineDelimited() ? this.#parseLines() : this.#parseDocument();
 
     for (const id of this.#allocator.collisions) {
       this.#diagnostics.push(
@@ -73,6 +68,54 @@ class JsonParser {
     }
 
     return { root, diagnostics: this.#diagnostics, truncated: this.#truncated };
+  }
+
+  #parseDocument(): Node {
+    const root = this.#parseValue(this.#allocator.allocate(ROOT_ID), 0);
+
+    const trailing = this.#peek();
+    if (trailing.type !== 'eof') {
+      this.#error(`Unexpected content after the top-level value`, trailing);
+    }
+
+    return root;
+  }
+
+  /**
+   * True when the first top-level value is followed, on a later line, by the start of another.
+   *
+   * Found by counting brackets rather than by parsing and retrying, so a large file is not parsed
+   * twice. Two values on one line stay an error: that is far more likely to be a typo than a stream.
+   */
+  #isLineDelimited(): boolean {
+    let depth = 0;
+
+    for (const [index, token] of this.#tokens.entries()) {
+      if (token.type === 'lbrace' || token.type === 'lbracket') depth += 1;
+      if (token.type === 'rbrace' || token.type === 'rbracket') depth -= 1;
+      if (depth !== 0 || !VALUE_END.has(token.type)) continue;
+
+      // Bad tokens are looked past, or one broken second line would hide the rest of the stream.
+      const rest = this.#tokens.slice(index + 1);
+      const nextValue = rest.find((candidate) => candidate.type !== 'error');
+      if (nextValue === undefined || !VALUE_START.has(nextValue.type)) return false;
+      return this.#text.slice(token.end, (rest[0] ?? nextValue).start).includes('\n');
+    }
+
+    return false;
+  }
+
+  /** NDJSON and friends: each value becomes an item, so a bad line costs only that line. */
+  #parseLines(): Node {
+    const id = this.#allocator.allocate(ROOT_ID);
+    const items: Node[] = [];
+
+    while (this.#peek().type !== 'eof') {
+      items.push(this.#parseValue(this.#allocator.allocate(indexChild(id, items.length)), 1));
+    }
+
+    this.#diagnostics.push(parseWarning(`Showing ${items.length} line-delimited values as an array.`));
+    return { id, kind: 'sequence', source: JSON_SOURCE_ID, typeName: 'array', items };
   }
 
   // ---- token stream -------------------------------------------------------
@@ -139,7 +182,12 @@ class JsonParser {
       const entry = this.#parseMember(id, entries.length, depth);
       if (entry !== undefined) entries.push(entry);
 
-      if (this.#accept('comma') === undefined) break;
+      if (this.#accept('comma') === undefined) {
+        // Another key means the comma was forgotten. Stopping here would lose the rest of the object.
+        if (this.#peek().type !== 'string') break;
+        this.#error('Expected ","', this.#peek());
+        continue;
+      }
 
       // A trailing comma is invalid JSON but ubiquitous in hand-edited files.
       if (this.#peek().type === 'rbrace') {
@@ -189,7 +237,11 @@ class JsonParser {
       const itemId = this.#allocator.allocate(indexChild(id, items.length));
       items.push(this.#parseValue(itemId, depth + 1));
 
-      if (this.#accept('comma') === undefined) break;
+      if (this.#accept('comma') === undefined) {
+        if (!VALUE_START.has(this.#peek().type)) break;
+        this.#error('Expected ","', this.#peek());
+        continue;
+      }
 
       if (this.#peek().type === 'rbracket') {
         this.#warn('Trailing comma', this.#peek());
@@ -287,6 +339,10 @@ class JsonParser {
 }
 
 const EOF_TOKEN: Token = { type: 'eof', start: 0, end: 0, raw: '' };
+
+const SCALARS: readonly TokenType[] = ['string', 'number', 'true', 'false', 'null'];
+const VALUE_START: ReadonlySet<TokenType> = new Set([...SCALARS, 'lbrace', 'lbracket']);
+const VALUE_END: ReadonlySet<TokenType> = new Set([...SCALARS, 'rbrace', 'rbracket']);
 
 function describe(token: Token): string {
   if (token.type === 'eof') return 'end of input';
