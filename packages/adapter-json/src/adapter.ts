@@ -15,6 +15,7 @@ import {
   type RawInput,
   type SourceAdapter,
 } from '@objectlens/core';
+import { formatJson } from './format.js';
 import { JSON_SOURCE_ID, parseJson } from './parser.js';
 import { sniffJson } from './sniff.js';
 
@@ -25,6 +26,7 @@ export const jsonAdapter: SourceAdapter = {
   mimeTypes: ['application/json'],
 
   sniff: sniffJson,
+  format: formatJson,
 
   parse(input: RawInput, context: ParseContext = {}): ParseResult {
     const maxBytes = context.maxBytes ?? MAX_INPUT_BYTES;

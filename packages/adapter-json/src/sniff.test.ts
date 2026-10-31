@@ -19,6 +19,10 @@ describe('content heuristics', () => {
     expect(sniff('{"name": "ada", "age": 36}')).toBeGreaterThan(0.8);
   });
 
+  it('ignores Python markers that only appear inside strings', () => {
+    expect(sniff(`{"msg": "don't call foo()", "state": "None"}`)).toBeGreaterThan(0.8);
+  });
+
   it('scores a plain array moderately', () => {
     expect(sniff('[1, 2, 3]')).toBeGreaterThan(0.5);
   });

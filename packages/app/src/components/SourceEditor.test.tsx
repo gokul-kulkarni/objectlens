@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { jsonAdapter } from '@objectlens/adapter-json';
+import { pythonAdapter } from '@objectlens/adapter-python';
 import { SourceEditor } from './SourceEditor.jsx';
 import { SegmentedControl } from './SegmentedControl.jsx';
 
@@ -67,6 +68,70 @@ describe('SourceEditor', () => {
     fireEvent.dragOver(target);
     fireEvent.drop(target, { dataTransfer: { files: [file] } });
     await vi.waitFor(() => expect(onChangeText).toHaveBeenCalledWith('{"a": 1}', 'a.json'));
+  });
+});
+
+describe('prettify', () => {
+  const json = {
+    detections: [{ adapter: jsonAdapter, confidence: 1 }],
+    effectiveAdapterId: 'json',
+    onChangeAdapter: vi.fn(),
+  };
+
+  it('rewrites the text through the active adapter', async () => {
+    const { onChangeText } = renderEditor({ ...json, text: '{"a":1}' });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Prettify' }));
+
+    expect(onChangeText).toHaveBeenCalledWith('{\n  "a": 1\n}');
+  });
+
+  it('is absent when the active adapter cannot format', () => {
+    renderEditor({
+      detections: [{ adapter: pythonAdapter, confidence: 1 }],
+      effectiveAdapterId: 'python-repr',
+      onChangeAdapter: vi.fn(),
+      text: "{'a': 1}",
+    });
+    expect(screen.queryByRole('button', { name: 'Prettify' })).toBeNull();
+  });
+
+  it('is absent for empty input', () => {
+    renderEditor({ ...json, text: '  ' });
+    expect(screen.queryByRole('button', { name: 'Prettify' })).toBeNull();
+  });
+
+  it('keeps the text and explains when it cannot format', async () => {
+    const { onChangeText } = renderEditor({ ...json, text: '{"a": @}' });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Prettify' }));
+
+    expect(onChangeText).not.toHaveBeenCalled();
+    expect(screen.getByRole('alert').textContent).toContain('Line 1');
+  });
+
+  it('drops the explanation once the text changes', async () => {
+    const props = { ...json, idPrefix: '', label: 'Source', placeholder: '', onChangeText: vi.fn() };
+    const { rerender } = render(<SourceEditor {...props} text='{"a": @}' />);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Prettify' }));
+    rerender(<SourceEditor {...props} text='{"a": 1}' />);
+
+    expect(screen.queryByRole('alert')).toBeNull();
+  });
+
+  it('survives an adapter that throws', async () => {
+    const adapter = {
+      ...jsonAdapter,
+      format: () => {
+        throw new Error('boom');
+      },
+    };
+    renderEditor({ ...json, detections: [{ adapter, confidence: 1 }], text: '{}' });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Prettify' }));
+
+    expect(screen.getByRole('alert').textContent).toContain('boom');
   });
 });
 

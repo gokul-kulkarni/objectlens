@@ -51,9 +51,12 @@ const PUNCTUATION: Readonly<Record<string, TokenType>> = {
 
 const LITERALS = ['true', 'false', 'null'] as const;
 
+/** Not JSON, but Windows tools write it and `String.trim` hides it from every other check. */
+const BYTE_ORDER_MARK = '\uFEFF';
+
 export function tokenize(text: string): readonly Token[] {
   const tokens: Token[] = [];
-  let pos = 0;
+  let pos = text.startsWith(BYTE_ORDER_MARK) ? 1 : 0;
 
   while (pos < text.length) {
     pos = skipTrivia(text, pos, tokens);

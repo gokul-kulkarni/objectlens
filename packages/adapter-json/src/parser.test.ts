@@ -191,6 +191,22 @@ describe('tolerance', () => {
     expect(diagnostics.filter((d) => d.message.includes('Comments'))).toHaveLength(1);
   });
 
+  it('keeps the rest of an object after a missing comma', () => {
+    const { root, diagnostics } = parse('{"a": 1 "b": 2, "c": 3}');
+
+    expect(childrenOf(root).map((c) => c.label)).toEqual(['a', 'b', 'c']);
+    expect(diagnostics.filter((d) => d.severity === 'error').map((d) => d.message)).toEqual([
+      'Expected ","',
+    ]);
+  });
+
+  it('keeps the rest of an array after a missing comma', () => {
+    const { root, diagnostics } = parse('[1 "two" {"three": 3} [4], 5]');
+
+    expect((root as SequenceNode).items).toHaveLength(5);
+    expect(diagnostics.filter((d) => d.message === 'Expected ","')).toHaveLength(3);
+  });
+
   it('reports content after the top-level value', () => {
     const { diagnostics } = parse('{"a": 1} trailing');
     expect(diagnostics.some((d) => d.message.includes('after the top-level value'))).toBe(true);
@@ -234,5 +250,58 @@ describe('depth limit', () => {
 
   it('leaves normally-nested input untruncated', () => {
     expect(parse('[[[[[1]]]]]').truncated).toBe(false);
+  });
+});
+
+describe('byte order mark', () => {
+  it('keeps the document when the input starts with one', () => {
+    const { root, diagnostics } = parse('\uFEFF{"a": 1}');
+    expect(root.kind).toBe('map');
+    expect(scalarAt(root, ['a']).value).toBe(1);
+    expect(diagnostics).toEqual([]);
+  });
+});
+
+describe('line-delimited JSON', () => {
+  it('reads each line as an item of a root array', () => {
+    const { root, diagnostics } = parse('{"a": 1}\n{"a": 2}\n{"a": 3}\n');
+
+    expect((root as SequenceNode).items).toHaveLength(3);
+    expect(scalarAt(root, [2, 'a']).value).toBe(3);
+    expect(diagnostics.map((d) => d.severity)).toEqual(['warning']);
+    expect(diagnostics[0]?.message).toContain('3 line-delimited values');
+  });
+
+  it('accepts values that span several lines', () => {
+    const { root } = parse('{\n  "a": 1\n}\n{\n  "a": 2\n}');
+    expect((root as SequenceNode).items).toHaveLength(2);
+  });
+
+  it('accepts bare scalars', () => {
+    expect((rootOf('1\n2\n3') as SequenceNode).items).toHaveLength(3);
+  });
+
+  it('loses only the bad line', () => {
+    const { root, diagnostics } = parse('{"a": 1}\noops\n{"a": 3}');
+
+    expect((root as SequenceNode).items).toHaveLength(3);
+    expect(scalarAt(root, [2, 'a']).value).toBe(3);
+    expect(diagnostics.filter((d) => d.severity === 'error')).toHaveLength(1);
+  });
+
+  it('gives every item a distinct id', () => {
+    const { items } = rootOf('{"a": 1}\n{"a": 2}') as SequenceNode;
+    expect(items[0]?.id).not.toBe(items[1]?.id);
+  });
+
+  it('does not treat a single document with a trailing newline as a stream', () => {
+    expect(rootOf('{"a": 1}\n').kind).toBe('map');
+  });
+
+  it('still reports two values on one line, which is not line-delimited', () => {
+    const { root, diagnostics } = parse('{"a": 1} {"a": 2}');
+
+    expect(root.kind).toBe('map');
+    expect(diagnostics.some((d) => d.message.includes('after the top-level value'))).toBe(true);
   });
 });

@@ -72,6 +72,20 @@ describe('arbitration against JSON', () => {
     ['{"name": "ada", "age": 36}', 'json', 'double-quoted keys, nothing Python-specific'],
     ['{"a": null}', 'json', 'null is JSON'],
     ['[{"id": 1}, {"id": 2}]', 'json', 'plain JSON array of objects'],
+    [`{"msg": "it's fine"}`, 'json', 'an apostrophe in a string is prose'],
+    ['{"code": "print(x)"}', 'json', 'a call in a string is text'],
+    ['{"status": "None", "ok": "True"}', 'json', 'a Python word in a string is text'],
+    [`["it's", "print(x)", "None"]`, 'json', 'no keys, and every marker is inside a string'],
+    [`{"level":"info","msg":"GET /users(1): can't connect","ts":1}`, 'json', 'a log line'],
+    ['{"b": 1, "a": 2}', 'json', 'a key named b is not a bytes literal'],
+    ['"hello"', 'json', 'a bare double-quoted string'],
+    ['42', 'json', 'a bare number'],
+    ['-1.5e3', 'json', 'a bare number with an exponent'],
+    ["'hello'", 'python-repr', 'a bare single-quoted string'],
+    ['1_000', 'python-repr', 'not a number JSON can write'],
+    [`{"name": "it's", "at": datetime(2024)}`, 'python-repr', 'a constructor outside any string'],
+    [`{"name": "it's", "a": None}`, 'python-repr', 'None outside any string'],
+    [`['say "hi"', None]`, 'python-repr', 'a double quote inside a single-quoted string'],
   ])('%s -> %s (%s)', (text, expected) => {
     expect(winner(text)).toBe(expected);
   });

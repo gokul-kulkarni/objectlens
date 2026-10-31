@@ -10,7 +10,7 @@
  * adapters separate cleanly without either knowing about the other.
  */
 
-import type { Confidence, RawInput } from '@objectlens/core';
+import { maskDoubleQuotedStrings, type Confidence, type RawInput } from '@objectlens/core';
 
 const HEAD_BYTES = 4096;
 
@@ -24,7 +24,7 @@ export function sniffJson(input: RawInput): Confidence {
   if (input.filename?.toLowerCase().endsWith('.json') === true) return 0.95;
   if (input.mimeType === 'application/json') return 0.95;
 
-  const head = input.text.slice(0, HEAD_BYTES).trim();
+  const head = maskDoubleQuotedStrings(input.text.slice(0, HEAD_BYTES).trim());
   if (head === '') return 0;
 
   const first = head[0] as string;
