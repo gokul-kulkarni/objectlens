@@ -1,0 +1,40 @@
+# Keeps the committed Orca plugin build honest.
+#
+# Orca installs a plugin by copying the files of a tagged commit, so `apps/orca-plugin/dist` is
+# committed rather than built on install. That makes it easy to change the UI and forget to
+# rebuild: the site would ship the change and the plugin would not. This rebuilds from source and
+# fails if the result differs from what is committed — which is also what lets the directory's
+# rule hold, that bundled output is fine only when its source is in the same repository.
+name: Orca plugin
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build-is-current:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.3.5'
+
+      - name: Install
+        run: bun install --frozen-lockfile
+
+      - name: Rebuild the plugin
+        run: bun run build:orca
+
+      - name: Committed build matches source
+        run: |
+          if ! git diff --exit-code --stat -- apps/orca-plugin/dist || [ -n "$(git status --porcelain -- apps/orca-plugin/dist)" ]; then
+            echo "::error::apps/orca-plugin/dist is out of date. Run 'bun run build:orca' and commit the result."
+            git status --porcelain -- apps/orca-plugin/dist
+            exit 1
+          fi
