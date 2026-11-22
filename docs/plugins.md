@@ -128,15 +128,14 @@ Score conservatively. A user can always override the picker; an adapter that gra
 ### 7. Register it
 
 ```ts
-// packages/app/src/registry.ts
-adapters.register(yamlAdapter);
+// packages/ui/src/adapters.ts
+registry.register(yamlAdapter);
 ```
 
-**And again in the worker.** `packages/app/src/worker/parse.worker.ts` keeps its own registry,
-because functions cannot cross a `postMessage` boundary and the worker cannot share the main
-thread's. This is a genuine papercut — forgetting it means the picker offers your format and
-parsing silently falls back to another adapter. If a third registry ever appears, this should
-become one shared module.
+That one line covers the main thread and the parse worker, and with them every app — the web site
+and the Orca editor. The worker still keeps its own registry instance, because functions cannot
+cross a `postMessage` boundary, but both are built by `createAdapterRegistry()`, so they cannot
+drift apart.
 
 ### 8. Test it against reality
 
@@ -198,7 +197,7 @@ than a single tree row. This is also how a table view appears only for a uniform
 ### Colour comes from tokens
 
 Node-kind colours are CSS custom properties (`--color-node-scalar`, `--color-label-field`, …)
-defined once in `packages/app/src/index.css`. Resolve those rather than picking your own, or a
+defined once in `packages/ui/src/index.css`. Resolve those rather than picking your own, or a
 scalar will be one green in your view and a different green in the tree, and the two stop reading
 as one picture.
 
@@ -239,8 +238,8 @@ reference in its `tsconfig.json`. Plus one bundled example, which is optional.
 
 **Changed in `@objectlens/core`, the views, or the app's components:** nothing.
 
-**Rough edges found, both now documented above:** the duplicate registration in the worker, and
-Tailwind's scan boundary (which applies to views, not adapters).
+**Rough edges found:** the duplicate registration in the worker (since folded into one
+`createAdapterRegistry()`), and Tailwind's scan boundary (which applies to views, not adapters).
 
 The IR needed no new `kind` for a format with anchors, tags, complex keys, binary scalars, and
 multi-document streams. `ref` — added for Python's `...` recursion marker and used again by the

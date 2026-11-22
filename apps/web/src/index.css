@@ -1,0 +1,3 @@
+/* The shared ObjectLens theme, plus this app's own markup for Tailwind's class scan. */
+@import '../../../packages/ui/src/index.css';
+@source './';

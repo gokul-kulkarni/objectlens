@@ -10,13 +10,9 @@
 
 import { lazy, Suspense, useState, type ReactNode } from 'react';
 import { Spinner } from '@objectlens/icons';
-import { ExploreMode } from './modes/ExploreMode.jsx';
-import { CompareMode } from './modes/CompareMode.jsx';
-import { SegmentedControl } from './components/SegmentedControl.jsx';
-import { MODES, useMode, type Mode } from './state/useMode.js';
-import { usePanelSizes } from './state/usePanelSizes.js';
+import { CompareMode, ExploreMode, MODES, SegmentedControl, useMode, usePanelSizes, type Mode } from '@objectlens/ui';
 
-const MarkdownMode = lazy(() => import('./modes/MarkdownMode.jsx').then((module) => ({ default: module.MarkdownMode })));
+const MarkdownMode = lazy(() => import('@objectlens/ui/markdown').then((module) => ({ default: module.MarkdownMode })));
 
 export function App() {
   const { mode, setMode } = useMode();

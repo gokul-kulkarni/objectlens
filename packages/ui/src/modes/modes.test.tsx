@@ -4,7 +4,7 @@ import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { diffGraphs } from '@objectlens/diff';
 import { adapters } from '../registry.js';
-import type { CompareRequest, CompareResponse, SourceInput } from '../worker/parse.worker.js';
+import type { CompareRequest, CompareResponse, SourceInput } from '../parse/protocol.js';
 import { PANEL_DEFAULTS, type PanelControls } from '../state/usePanelSizes.js';
 import { COMPARE_EXAMPLES, MARKDOWN_EXAMPLES } from '../examples.js';
 

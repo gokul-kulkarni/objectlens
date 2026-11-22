@@ -49,13 +49,13 @@ jobs:
         run: python3 -m unittest discover -s python/tests
 
       - name: Build
-        run: bun run build
+        run: bun run build:web
 
       - uses: actions/configure-pages@v5
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: packages/app/dist
+          path: apps/web/dist
 
   deploy:
     needs: build

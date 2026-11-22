@@ -1,0 +1,16 @@
+{
+  "name": "@objectlens/orca-plugin",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "description": "ObjectLens as an Orca custom editor: open JSON, YAML or a Python repr() dump as a tree or graph.",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite build --watch",
+    "typecheck": "tsc --build"
+  },
+  "dependencies": {
+    "@objectlens/icons": "workspace:*",
+    "@objectlens/ui": "workspace:*"
+  }
+}

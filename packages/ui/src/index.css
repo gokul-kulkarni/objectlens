@@ -18,8 +18,11 @@
  * packages resolve through a `node_modules` symlink, which it skips by design. Without these the
  * scan silently misses every class that only a view or the icon set uses — the selected-row ring,
  * the type chip's size, the spinner's animation — and they vanish from the output with no error.
- * Any new package that renders markup has to be listed here too.
+ * Any new package that renders markup has to be listed here too. This stylesheet lives in a
+ * library now, so it names its own folder as well: an app that imports it is scanned from the
+ * app's folder, not this one.
  */
+@source './';
 @source '../../icons/src';
 @source '../../view-tree/src';
 @source '../../view-graph/src';

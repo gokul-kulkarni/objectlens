@@ -1,0 +1,17 @@
+{
+  "name": "@objectlens/web",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "description": "The public ObjectLens site: the shared UI behind a header, a mode switcher and analytics.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --build"
+  },
+  "dependencies": {
+    "@objectlens/icons": "workspace:*",
+    "@objectlens/ui": "workspace:*"
+  }
+}
