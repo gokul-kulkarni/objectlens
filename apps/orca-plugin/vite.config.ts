@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
+import { plainTextOutput } from './src/bundling/plainTextOutput';
 
 /*
  * Builds the custom editor into `dist/`, which is committed: Orca installs a plugin by copying
@@ -12,9 +13,14 @@ import tailwindcss from '@tailwindcss/vite';
  * paths. No sourcemaps: they would double the plugin's size for a frame nobody debugs from source.
  */
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwindcss(), plainTextOutput()],
+  // The parse worker is a separate bundle with its own plugin list.
+  worker: { format: 'es', plugins: () => [plainTextOutput()] },
   base: './',
   publicDir: false,
+  // Escape every non-ASCII character in the output; `escapeControlCharacters` below does the
+  // same for control characters, which esbuild writes as-is.
+  esbuild: { charset: 'ascii' },
   build: {
     outDir: 'dist',
     emptyOutDir: true,

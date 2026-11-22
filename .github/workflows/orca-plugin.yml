@@ -25,6 +25,27 @@ jobs:
         with:
           bun-version: '1.3.5'
 
+      # Orca's directory refuses to list a release that contains binary files, and it judges a
+      # file binary by its bytes: one raw NUL in a test fixture was enough. Images and web fonts
+      # are allowed; anything else must be plain text with no control characters but whitespace.
+      - name: No binary files in the repository
+        run: |
+          python3 - <<'PY'
+          import subprocess, sys
+          allowed = ('.png', '.jpg', '.jpeg', '.webp', '.gif', '.woff', '.woff2')
+          names = subprocess.run(['git', 'ls-files', '-z'], capture_output=True, check=True).stdout.decode().split('\0')
+          bad = []
+          for name in filter(None, names):
+              if name.lower().endswith(allowed):
+                  continue
+              data = open(name, 'rb').read()
+              if any((c < 0x20 and c not in (9, 10, 13)) or c == 0x7f for c in data):
+                  bad.append(name)
+          for name in bad:
+              print(f'::error file={name}::contains control characters; Orca treats it as binary. Use escapes such as \\x00 instead.')
+          sys.exit(1 if bad else 0)
+          PY
+
       - name: Install
         run: bun install --frozen-lockfile
 
