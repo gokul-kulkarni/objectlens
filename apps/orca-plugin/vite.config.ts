@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
-import { plainTextOutput } from './src/build/plainTextOutput';
+import { plainTextOutput } from './src/bundling/plainTextOutput';
 
 /*
  * Builds the custom editor into `dist/`, which is committed: Orca installs a plugin by copying
