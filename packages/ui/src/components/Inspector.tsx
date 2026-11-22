@@ -120,9 +120,9 @@ export function Inspector({ graph, selection, onSelect }: InspectorProps) {
           <p className="mt-0.5 font-mono text-[11px] text-[color:var(--color-ink-subtle)]">at {node.address}</p>
         )}
         {node.kind === 'scalar' && node.raw !== undefined && String(node.value) !== node.raw && (
-          <p className="mt-1 text-[11px] text-amber-300/80">
+          <p className="mt-1 text-[11px] text-caution">
             Exact source text differs from the parsed value — displaying{' '}
-            <code className="text-amber-200">{node.raw}</code>.
+            <code className="font-semibold text-caution">{node.raw}</code>.
           </p>
         )}
       </div>
@@ -141,7 +141,7 @@ export function Inspector({ graph, selection, onSelect }: InspectorProps) {
               {copied === 'value' ? 'Copied' : 'Copy'}
             </button>
           </h2>
-          <pre className="max-h-64 overflow-auto whitespace-pre-wrap break-all rounded bg-surface-sunken p-1.5 text-[11px] text-emerald-300">
+          <pre className="max-h-64 overflow-auto whitespace-pre-wrap break-all rounded bg-surface-sunken p-1.5 text-[11px] text-[color:var(--color-diff-added)]">
             {fullValue}
           </pre>
         </div>

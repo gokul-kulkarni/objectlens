@@ -176,7 +176,8 @@ serves this identical bundle from `127.0.0.1`, and a build hardcoded to one orig
 `apps/orca-plugin` packages the explorer as an [Orca](https://github.com/stablyai/orca) custom
 editor. Open a `.json`, `.yaml`, `.yml`, `.repr` or `.pyrepr` file in Orca and pick **ObjectLens**
 in the view toggle beside Source (`.objectlens.json` files open in it by default). It is
-read-only: edit in Source, or let an agent rewrite the file, and the tree re-parses.
+read-only: edit in Source, or let an agent rewrite the file, and the tree re-parses. It follows
+Orca's light or dark theme, switching in place when the theme changes.
 
 ```bash
 bun run build:orca
