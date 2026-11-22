@@ -1,29 +1,37 @@
 /**
- * Explore: one object, as a tree or a graph.
+ * One parsed object, explored: search, the view switcher, the active view, diagnostics, and the
+ * inspector beside it.
  *
- * Owns the state that views share. It resolves which view to render from the registry rather
- * than importing one directly — the switcher lists whatever is registered and can render the
- * current graph, so a new view appears without this file changing.
+ * Everything in Explore except where the text comes from. The web app puts a paste box to its
+ * left; the Orca editor feeds it the open file. It resolves which view to render from the
+ * registry rather than importing one directly, so a new view appears without this file changing.
  */
 
-import { useMemo, type CSSProperties } from 'react';
+import { useMemo, type CSSProperties, type ReactNode } from 'react';
 import { InMemoryNodeSource } from '@objectlens/core';
 import { Search, Spinner } from '@objectlens/icons';
 import { views } from '../registry.js';
-import { useViewer } from '../state/useViewer.js';
-import { InputPanel } from '../components/InputPanel.jsx';
-import { Inspector } from '../components/Inspector.jsx';
-import { DiagnosticsPanel } from '../components/DiagnosticsPanel.jsx';
-import { ResizeHandle } from '../components/ResizeHandle.jsx';
-import { SegmentedControl } from '../components/SegmentedControl.jsx';
+import type { useViewer } from '../state/useViewer.js';
+import { Inspector } from './Inspector.jsx';
+import { DiagnosticsPanel } from './DiagnosticsPanel.jsx';
+import { ResizeHandle } from './ResizeHandle.jsx';
+import { SegmentedControl } from './SegmentedControl.jsx';
 import { PANEL_LIMITS, type PanelControls } from '../state/usePanelSizes.js';
 
 const EMPTY_MATCHES: ReadonlySet<string> = new Set();
 
-export function ExploreMode({ panels }: { readonly panels: PanelControls }) {
-  const viewer = useViewer();
+export type Viewer = ReturnType<typeof useViewer>;
+
+export interface ObjectExplorerProps {
+  readonly viewer: Viewer;
+  readonly panels: PanelControls;
+  /** Shown in place of a view before anything has been parsed. */
+  readonly emptyHint?: ReactNode;
+}
+
+export function ObjectExplorer({ viewer, panels, emptyHint }: ObjectExplorerProps) {
   const { sizes, setPanel, adjustPanel, resetPanel } = panels;
-  const { state, detections, effectiveAdapterId, searchResult } = viewer;
+  const { state, searchResult } = viewer;
 
   const nodeSource = useMemo(
     () => (state.graph === null ? null : new InMemoryNodeSource(state.graph)),
@@ -38,37 +46,7 @@ export function ExploreMode({ panels }: { readonly panels: PanelControls }) {
   const active = available.find((view) => view.id === state.viewId) ?? available[0];
 
   return (
-    // Flex rather than grid: the panels are user-resizable, so their widths are inline styles
-    // driven by the drag handles. Below `lg` this stacks vertically and the handles hide, since
-    // dragging a divider on a phone is not a thing anyone wants to do.
-    <main className="flex min-h-0 flex-1 flex-col lg:flex-row">
-      <div
-        className="min-h-0 shrink-0 border-b border-line lg:w-[var(--left-panel)] lg:border-b-0"
-        style={{ '--left-panel': `${sizes.left}px` } as CSSProperties}
-      >
-        <InputPanel
-          text={state.text}
-          detections={detections}
-          adapterId={state.adapterId}
-          effectiveAdapterId={effectiveAdapterId}
-          status={state.status}
-          onChangeText={viewer.setInput}
-          onChangeAdapter={viewer.setAdapter}
-          onParse={viewer.parse}
-        />
-      </div>
-
-      <ResizeHandle
-        label="Resize input panel"
-        value={sizes.left}
-        min={PANEL_LIMITS.left.min}
-        max={PANEL_LIMITS.left.max}
-        side="left"
-        onResize={(width) => setPanel('left', width)}
-        onAdjust={(delta) => adjustPanel('left', delta)}
-        onReset={() => resetPanel('left')}
-      />
-
+    <>
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         <div className="flex shrink-0 items-center gap-2 border-b border-line px-3 py-1.5">
           <div className="relative min-w-0 flex-1">
@@ -126,7 +104,7 @@ export function ExploreMode({ panels }: { readonly panels: PanelControls }) {
               matches={searchResult?.matches ?? EMPTY_MATCHES}
             />
           ) : (
-            <EmptyState status={state.status} />
+            <EmptyState status={state.status} hint={emptyHint} />
           )}
         </div>
 
@@ -158,11 +136,11 @@ export function ExploreMode({ panels }: { readonly panels: PanelControls }) {
           <p className="p-3 text-xs text-[color:var(--color-ink-subtle)]">No object loaded.</p>
         )}
       </div>
-    </main>
+    </>
   );
 }
 
-function EmptyState({ status }: { readonly status: string }) {
+function EmptyState({ status, hint }: { readonly status: string; readonly hint: ReactNode }) {
   if (status === 'parsing') {
     return (
       <div
@@ -184,20 +162,5 @@ function EmptyState({ status }: { readonly status: string }) {
     );
   }
 
-  return (
-    <div className="max-w-md p-6 text-sm text-[color:var(--color-ink-subtle)]">
-      <p className="mb-3 leading-relaxed">
-        Paste a Python <code className="font-mono text-[color:var(--color-node-scalar)]">repr()</code>{' '}
-        dump or some JSON on the left, then press{' '}
-        <kbd className="rounded border border-line-strong bg-surface-raised px-1.5 py-0.5 font-mono text-[11px] text-[color:var(--color-ink-muted)]">
-          ⌘&#9166;
-        </kbd>
-        .
-      </p>
-      <p className="text-xs leading-relaxed">
-        Or load one of the examples below the input — they cover cycles, bignums, and deliberately
-        malformed text.
-      </p>
-    </div>
-  );
+  return <div className="max-w-md p-6 text-sm text-[color:var(--color-ink-subtle)]">{hint}</div>;
 }

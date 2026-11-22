@@ -25,6 +25,22 @@
         "vitest": "^3.2.4",
       },
     },
+    "apps/orca-plugin": {
+      "name": "@objectlens/orca-plugin",
+      "version": "0.1.0",
+      "dependencies": {
+        "@objectlens/icons": "workspace:*",
+        "@objectlens/ui": "workspace:*",
+      },
+    },
+    "apps/web": {
+      "name": "@objectlens/web",
+      "version": "0.1.0",
+      "dependencies": {
+        "@objectlens/icons": "workspace:*",
+        "@objectlens/ui": "workspace:*",
+      },
+    },
     "packages/adapter-json": {
       "name": "@objectlens/adapter-json",
       "version": "0.1.0",
@@ -62,27 +78,6 @@
         "@objectlens/adapter-python": "workspace:*",
       },
     },
-    "packages/app": {
-      "name": "@objectlens/app",
-      "version": "0.1.0",
-      "dependencies": {
-        "@fontsource-variable/space-grotesk": "^5.3.0",
-        "@objectlens/adapter-json": "workspace:*",
-        "@objectlens/adapter-python": "workspace:*",
-        "@objectlens/adapter-snapshot": "workspace:*",
-        "@objectlens/adapter-yaml": "workspace:*",
-        "@objectlens/core": "workspace:*",
-        "@objectlens/diff": "workspace:*",
-        "@objectlens/icons": "workspace:*",
-        "@objectlens/view-graph": "workspace:*",
-        "@objectlens/view-tree": "workspace:*",
-        "@tanstack/react-virtual": "^3.13.12",
-        "dompurify": "^3.4.17",
-        "highlight.js": "^11.12.0",
-        "marked": "^18.1.1",
-        "mermaid": "^12.2.0",
-      },
-    },
     "packages/core": {
       "name": "@objectlens/core",
       "version": "0.1.0",
@@ -113,6 +108,27 @@
       "version": "0.1.0",
       "peerDependencies": {
         "react": ">=18",
+      },
+    },
+    "packages/ui": {
+      "name": "@objectlens/ui",
+      "version": "0.1.0",
+      "dependencies": {
+        "@fontsource-variable/space-grotesk": "^5.3.0",
+        "@objectlens/adapter-json": "workspace:*",
+        "@objectlens/adapter-python": "workspace:*",
+        "@objectlens/adapter-snapshot": "workspace:*",
+        "@objectlens/adapter-yaml": "workspace:*",
+        "@objectlens/core": "workspace:*",
+        "@objectlens/diff": "workspace:*",
+        "@objectlens/icons": "workspace:*",
+        "@objectlens/view-graph": "workspace:*",
+        "@objectlens/view-tree": "workspace:*",
+        "@tanstack/react-virtual": "^3.13.12",
+        "dompurify": "^3.4.17",
+        "highlight.js": "^11.12.0",
+        "marked": "^18.1.1",
+        "mermaid": "^12.2.0",
       },
     },
     "packages/view-graph": {
@@ -312,17 +328,21 @@
 
     "@objectlens/adapter-yaml": ["@objectlens/adapter-yaml@workspace:packages/adapter-yaml"],
 
-    "@objectlens/app": ["@objectlens/app@workspace:packages/app"],
-
     "@objectlens/core": ["@objectlens/core@workspace:packages/core"],
 
     "@objectlens/diff": ["@objectlens/diff@workspace:packages/diff"],
 
     "@objectlens/icons": ["@objectlens/icons@workspace:packages/icons"],
 
+    "@objectlens/orca-plugin": ["@objectlens/orca-plugin@workspace:apps/orca-plugin"],
+
+    "@objectlens/ui": ["@objectlens/ui@workspace:packages/ui"],
+
     "@objectlens/view-graph": ["@objectlens/view-graph@workspace:packages/view-graph"],
 
     "@objectlens/view-tree": ["@objectlens/view-tree@workspace:packages/view-tree"],
+
+    "@objectlens/web": ["@objectlens/web@workspace:apps/web"],
 
     "@pkgjs/parseargs": ["@pkgjs/parseargs@0.11.0", "", {}, "sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg=="],
 

@@ -5,18 +5,22 @@
   "type": "module",
   "description": "Explore structured objects from any language as a tree or graph.",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "apps/*"
   ],
   "scripts": {
     "build": "bun run --filter '*' build",
-    "dev": "bun run --filter @objectlens/app dev",
+    "dev": "bun run --filter @objectlens/web dev",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "typecheck": "tsc --build --verbose",
     "clean": "tsc --build --clean",
     "test:python": "python3 -m unittest discover -s python/tests",
-    "test:all": "bun run test && bun run test:python"
+    "test:all": "bun run test && bun run test:python",
+    "dev:orca": "bun run --filter @objectlens/orca-plugin dev",
+    "build:web": "bun run --filter @objectlens/web build",
+    "build:orca": "bun run --filter @objectlens/orca-plugin build"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",

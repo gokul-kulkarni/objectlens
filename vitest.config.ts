@@ -2,14 +2,14 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    include: ['packages/*/src/**/*.test.ts', 'packages/*/src/**/*.test.tsx'],
+    include: ['{packages,apps}/*/src/**/*.test.ts', '{packages,apps}/*/src/**/*.test.tsx'],
     setupFiles: ['./vitest.setup.ts'],
     // Testing Library registers its automatic unmount via a global afterEach; without globals
     // every component test would leak its DOM into the next one.
     globals: true,
     coverage: {
       provider: 'v8',
-      include: ['packages/*/src/**/*.ts', 'packages/*/src/**/*.tsx'],
+      include: ['{packages,apps}/*/src/**/*.ts', '{packages,apps}/*/src/**/*.tsx'],
       // `index.ts` files are pure re-exports; counting them inflates coverage without testing anything.
       exclude: [
         '**/*.test.*',
@@ -17,11 +17,13 @@ export default defineConfig({
         '**/*.d.ts',
         // Test-only helpers, and wiring with no logic of its own to cover.
         '**/testing/**',
-        'packages/app/src/main.tsx',
-        'packages/app/src/registry.ts',
-        'packages/app/src/examples.ts',
+        'apps/web/src/main.tsx',
+        'apps/orca-plugin/src/main.tsx',
+        'packages/ui/src/registry.ts',
+        'packages/ui/src/adapters.ts',
+        'packages/ui/src/examples.ts',
         // Runs only inside a Worker; exercised end-to-end in the browser, not in node.
-        'packages/app/src/worker/**',
+        'packages/ui/src/worker/**',
       ],
       thresholds: {
         lines: 80,

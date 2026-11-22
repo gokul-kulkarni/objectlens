@@ -15,7 +15,8 @@ import {
   type DiffResult,
 } from '@objectlens/diff';
 import { adapters } from '../registry.js';
-import type { CompareRequest, SourceInput, WorkerResponse } from '../worker/parse.worker.js';
+import { createParseClient, type ParseClient } from '../parse/client.js';
+import type { CompareRequest, SourceInput } from '../parse/protocol.js';
 
 export type Side = 'left' | 'right';
 
@@ -171,14 +172,11 @@ export function stepChange(
 
 export function useCompare() {
   const [state, dispatch] = useReducer(compareReducer, initialCompareState);
-  const workerRef = useRef<Worker | null>(null);
+  const clientRef = useRef<ParseClient | null>(null);
   const requestId = useRef(0);
 
   useEffect(() => {
-    const worker = new Worker(new URL('../worker/parse.worker.ts', import.meta.url), { type: 'module' });
-
-    worker.addEventListener('message', (event: MessageEvent<WorkerResponse>) => {
-      const response = event.data;
+    const client = createParseClient((response) => {
       // Ignore superseded requests, or a slow comparison overwrites a newer one.
       if (response.type !== 'compare' || response.id !== requestId.current) return;
       dispatch({
@@ -190,8 +188,8 @@ export function useCompare() {
       });
     });
 
-    workerRef.current = worker;
-    return () => worker.terminate();
+    clientRef.current = client;
+    return () => client.dispose();
   }, []);
 
   const leftDetections = useMemo(() => detect(state.left), [state.left]);
@@ -201,8 +199,8 @@ export function useCompare() {
   const canCompare = leftAdapter !== null && rightAdapter !== null;
 
   const compare = useCallback(() => {
-    const worker = workerRef.current;
-    if (worker === null || leftAdapter === null || rightAdapter === null) return;
+    const client = clientRef.current;
+    if (client === null || leftAdapter === null || rightAdapter === null) return;
 
     const source = (side: SideState, adapterId: string): SourceInput =>
       side.filename === undefined ? { adapterId, text: side.text } : { adapterId, text: side.text, filename: side.filename };
@@ -216,7 +214,7 @@ export function useCompare() {
       right: source(state.right, rightAdapter),
       options: state.arrayKey.trim() === '' ? {} : { arrayKey: state.arrayKey.trim() },
     };
-    worker.postMessage(request);
+    client.post(request);
   }, [leftAdapter, rightAdapter, state.left, state.right, state.arrayKey]);
 
   const index = useMemo(() => (state.diff === null ? null : indexDiff(state.diff)), [state.diff]);

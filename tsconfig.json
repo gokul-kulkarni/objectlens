@@ -29,7 +29,13 @@
       "path": "./packages/view-graph"
     },
     {
-      "path": "./packages/app"
+      "path": "./packages/ui"
+    },
+    {
+      "path": "./apps/web"
+    },
+    {
+      "path": "./apps/orca-plugin"
     }
   ]
 }

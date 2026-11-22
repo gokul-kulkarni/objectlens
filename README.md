@@ -15,7 +15,7 @@ kinds of network request:
 - On the public site only, [Cloudflare Web Analytics](https://www.cloudflare.com/web-analytics/)
   counts page views: page path, referrer, browser, country and load timing. It sets no cookies and
   never sees your data. Local builds and the Python package never load it
-  (`packages/app/src/analytics.ts`).
+  (`apps/web/src/analytics.ts`). The Orca plugin never loads it either.
 
 `print(obj)` gives you an unreadable wall of text, `pprint` gives you a slightly better wall, and a
 real debugger needs an IDE and a live process. ObjectLens takes the text you already copied out of
@@ -157,8 +157,8 @@ than a hope.
 
 ## Deploying
 
-The site is static, so hosting it needs no server of any kind — `bun run build` produces
-`packages/app/dist` and any file host will do.
+The site is static, so hosting it needs no server of any kind — `bun run build:web` produces
+`apps/web/dist` and any file host will do.
 
 [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) publishes it to GitHub Pages on
 every push to `main`, gated on typecheck and both test suites: this goes to a public URL, and a
@@ -171,6 +171,21 @@ workflow fails with a permissions error until that is done, which is the only ma
 `/repo/` subpath, and from `file://`. That matters beyond convenience: the local Python package
 serves this identical bundle from `127.0.0.1`, and a build hardcoded to one origin could not.
 
+## Orca plugin
+
+`apps/orca-plugin` packages the explorer as an [Orca](https://github.com/stablyai/orca) custom
+editor. Open a `.json`, `.yaml`, `.yml`, `.repr` or `.pyrepr` file in Orca and pick **ObjectLens**
+in the view toggle beside Source (`.objectlens.json` files open in it by default). It is
+read-only: edit in Source, or let an agent rewrite the file, and the tree re-parses.
+
+```bash
+bun run build:orca
+orca plugin dev load apps/orca-plugin/dist   # prints the access it asks for and an --approve fingerprint
+```
+
+The plugin runs in Orca's sandboxed frame with no network. It parses in a Web Worker when the
+frame allows one and on the main thread when it does not (`packages/ui/src/parse/client.ts`).
+
 ## Development
 
 Requires [Bun](https://bun.sh) (developed against 1.3).
@@ -182,7 +197,9 @@ bun run test:python   # the export snippet's suite — stdlib unittest, nothing 
 bun run test:all      # both
 bun run typecheck     # tsc project references, strict
 bun run dev           # the Vite site on :5173
-bun run build         # static output in packages/app/dist
+bun run build:web     # static site in apps/web/dist
+bun run build:orca    # loadable Orca plugin in apps/orca-plugin/dist
+bun run dev:orca      # rebuild the plugin on every save
 ```
 
 The Python suite deliberately needs no `pip install`: the snippet's whole promise is that it runs
@@ -205,8 +222,10 @@ packages/adapter-*/       source format → IR (JSON, Python repr, snapshot, YAM
 packages/view-*/          IR → rendering (tree, graph)
 packages/diff/            structural diff of two graphs — depends on core only
 packages/icons/           the SVG icon set both views draw with
-packages/app/             the Vite site; wires the registries together, and hosts the
-                          Compare (src/compare) and Markdown (src/markdown) modes
+packages/ui/              the shared React UI: wires the registries together, the parse
+                          worker, and the Explore, Compare and Markdown modes
+apps/web/                 the public site: header, mode switcher, analytics, icons
+apps/orca-plugin/         the Orca custom editor: opens .json/.yaml/repr files as a tree or graph
 python/snippets/export.py the zero-install exporter — stdlib only, meant to be pasted
 python/tests/             its unittest suite
 python/fixtures/          corpus generators; output committed under docs/fixtures/

@@ -18,7 +18,8 @@ import {
   type ObjectGraph,
 } from '@objectlens/core';
 import { adapters } from '../registry.js';
-import type { ParseRequest, WorkerResponse } from '../worker/parse.worker.js';
+import { createParseClient, type ParseClient } from '../parse/client.js';
+import type { ParseRequest } from '../parse/protocol.js';
 
 export interface ViewerState {
   readonly text: string;
@@ -111,28 +112,24 @@ function reducer(state: ViewerState, action: Action): ViewerState {
 
 export function useViewer() {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const workerRef = useRef<Worker | null>(null);
+  const clientRef = useRef<ParseClient | null>(null);
   const requestId = useRef(0);
 
   useEffect(() => {
-    const worker = new Worker(new URL('../worker/parse.worker.ts', import.meta.url), {
-      type: 'module',
-    });
-
-    worker.addEventListener('message', (event: MessageEvent<WorkerResponse>) => {
+    const client = createParseClient((response) => {
       // Ignore responses from superseded requests, or fast typing shows stale results.
-      if (event.data.type !== 'parse' || event.data.id !== requestId.current) return;
+      if (response.type !== 'parse' || response.id !== requestId.current) return;
 
       dispatch({
         type: 'parsed',
-        graph: event.data.graph,
-        diagnostics: event.data.diagnostics,
-        elapsedMs: event.data.elapsedMs,
+        graph: response.graph,
+        diagnostics: response.diagnostics,
+        elapsedMs: response.elapsedMs,
       });
     });
 
-    workerRef.current = worker;
-    return () => worker.terminate();
+    clientRef.current = client;
+    return () => client.dispose();
   }, []);
 
   /** Adapters ranked for the current input — drives both auto-detection and the picker. */
@@ -146,8 +143,8 @@ export function useViewer() {
   const effectiveAdapterId = state.adapterId ?? detections[0]?.adapter.id ?? null;
 
   const parse = useCallback(() => {
-    const worker = workerRef.current;
-    if (worker === null || effectiveAdapterId === null || state.text.trim() === '') return;
+    const client = clientRef.current;
+    if (client === null || effectiveAdapterId === null || state.text.trim() === '') return;
 
     requestId.current += 1;
     dispatch({ type: 'parseStarted' });
@@ -159,7 +156,7 @@ export function useViewer() {
       text: state.text,
       ...(state.filename === undefined ? {} : { filename: state.filename }),
     };
-    worker.postMessage(request);
+    client.post(request);
   }, [effectiveAdapterId, state.text, state.filename]);
 
   const searchResult = useMemo(() => {
