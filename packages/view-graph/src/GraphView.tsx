@@ -94,6 +94,8 @@ function GraphCanvas({ graph, selection, onSelect, expanded, onToggleExpand, mat
           elementsSelectable
           // At the node cap this is ~1,200 cards; culling keeps panning smooth on a laptop.
           onlyRenderVisibleElements
+          // The scheme only picks the library's fallback colours; the app's stylesheet points
+          // every one it uses at the active palette's tokens, light or dark.
           colorMode="dark"
           proOptions={{ hideAttribution: true }}
           aria-label="Object graph"
@@ -104,7 +106,6 @@ function GraphCanvas({ graph, selection, onSelect, expanded, onToggleExpand, mat
             pannable
             zoomable
             nodeColor={miniMapColor}
-            maskColor="rgb(15 23 42 / 0.7)"
             // Smaller than the 200×150 default: the canvas often sits in a narrow middle pane,
             // where the default overview covers a third of it.
             style={{ width: 140, height: 100 }}
