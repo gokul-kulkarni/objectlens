@@ -179,10 +179,23 @@ in the view toggle beside Source (`.objectlens.json` files open in it by default
 read-only: edit in Source, or let an agent rewrite the file, and the tree re-parses. It follows
 Orca's light or dark theme, switching in place when the theme changes.
 
+Install it from Orca's plugin directory, or from the command line:
+
 ```bash
-bun run build:orca
-orca plugin dev load apps/orca-plugin/dist   # prints the access it asks for and an --approve fingerprint
+orca plugin install gokul-kulkarni/objectlens
 ```
+
+The repository itself is the plugin: `orca-plugin.json` sits at the root and names the committed
+build in `apps/orca-plugin/dist/`, because Orca installs a plugin by copying a tagged commit's
+files. To work on it, rebuild and load your checkout as a development plugin:
+
+```bash
+bun run build:orca            # commit apps/orca-plugin/dist with any UI change; CI checks it
+orca plugin dev load .        # prints the access it asks for and an --approve fingerprint
+```
+
+To release, bump `version` in `orca-plugin.json`, merge, and push a matching tag
+(`git tag v0.2.0 && git push origin v0.2.0`). The directory lists the newest `vX.Y.Z` tag.
 
 The plugin runs in Orca's sandboxed frame with no network. It parses in a Web Worker when the
 frame allows one and on the main thread when it does not (`packages/ui/src/parse/client.ts`).
@@ -199,7 +212,7 @@ bun run test:all      # both
 bun run typecheck     # tsc project references, strict
 bun run dev           # the Vite site on :5173
 bun run build:web     # static site in apps/web/dist
-bun run build:orca    # loadable Orca plugin in apps/orca-plugin/dist
+bun run build:orca    # the Orca plugin's committed build, apps/orca-plugin/dist
 bun run dev:orca      # rebuild the plugin on every save
 ```
 

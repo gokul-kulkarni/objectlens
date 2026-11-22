@@ -1,0 +1,57 @@
+{
+  "$schema": "https://raw.githubusercontent.com/stablyai/orca/main/docs/reference/orca-plugin.v2.schema.json",
+  "manifestVersion": 2,
+  "id": "objectlens",
+  "name": "ObjectLens",
+  "version": "0.1.0",
+  "description": "Explore JSON, YAML and Python repr() files as a searchable tree or graph, beside Source.",
+  "license": "MIT",
+  "author": {
+    "name": "Gokul Kulkarni",
+    "url": "https://gokulkulkarni.dev"
+  },
+  "repository": "https://github.com/gokul-kulkarni/objectlens",
+  "homepage": "https://objectlens.gokulkulkarni.dev",
+  "icon": "apps/orca-plugin/assets/icon.png",
+  "cover": {
+    "path": "apps/orca-plugin/assets/cover.png",
+    "alt": "ObjectLens showing a four-document YAML file as a tree, with keys, typed values and a cycle marker"
+  },
+  "screenshots": [
+    {
+      "path": "apps/orca-plugin/assets/screenshot-python-snapshot.png",
+      "alt": "A Python object snapshot as a tree, with a shared reference, a cycle, big integers and special floats",
+      "caption": "Python objects with shared references and cycles, exactly as exported",
+      "theme": "dark"
+    },
+    {
+      "path": "apps/orca-plugin/assets/screenshot-yaml.png",
+      "alt": "A YAML stream of a CI workflow, a compose file and a Kubernetes manifest as one tree",
+      "caption": "Multi-document YAML, with anchors, tags and typed scalars",
+      "theme": "dark"
+    }
+  ],
+  "engines": {
+    "orca": ">=1.4.248"
+  },
+  "execution": "sandboxed-ui",
+  "pluginApi": 1,
+  "contributes": {
+    "customEditors": [
+      {
+        "id": "objectlens",
+        "title": "ObjectLens",
+        "extensions": [
+          ".json",
+          ".yaml",
+          ".yml",
+          ".repr",
+          ".pyrepr",
+          ".objectlens.json"
+        ],
+        "entry": "apps/orca-plugin/dist/editor.html",
+        "frame": "isolated"
+      }
+    ]
+  }
+}

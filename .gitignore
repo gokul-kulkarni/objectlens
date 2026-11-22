@@ -1,5 +1,7 @@
 node_modules/
 dist/
+# The Orca plugin's build is committed: installs copy a tagged commit's files.
+!apps/orca-plugin/dist/
 dist-types/
 coverage/
 *.tsbuildinfo
