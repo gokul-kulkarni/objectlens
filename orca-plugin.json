@@ -3,7 +3,7 @@
   "manifestVersion": 2,
   "id": "objectlens",
   "name": "ObjectLens",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Explore JSON, YAML and Python repr() files as a searchable tree or graph, beside Source.",
   "license": "MIT",
   "author": {
@@ -41,6 +41,7 @@
       {
         "id": "objectlens",
         "title": "ObjectLens",
+        "icon": "apps/orca-plugin/assets/editor-icon.png",
         "extensions": [
           ".json",
           ".yaml",
